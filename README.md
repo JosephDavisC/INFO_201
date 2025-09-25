@@ -38,3 +38,10 @@ Inside each folder, you’ll typically find:
 
 ## 📌 Notes
 - A `.gitignore` file is included to prevent uploading unnecessary files (`.DS_Store`, `.Rprofile`, `renv/`, `.env`, etc.).  
+
+---
+
+## ⚠️ Disclaimer
+This repository contains **my personal solutions** for INFO 201 (Foundations of Data Science).  
+It is intended for **learning and reference only**.  
+Please do not copy these materials for academic submission.
