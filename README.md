@@ -14,7 +14,6 @@ Each assignment will have its own folder:
 Inside each folder, you’ll typically find:
 - `.Rmd` files (R Markdown submissions)  
 - `.html` or `.pdf` files (rendered outputs)  
-- Instruction PDFs provided for the assignment  
 
 ---
 
