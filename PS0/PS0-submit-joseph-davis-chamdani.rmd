@@ -1,0 +1,9 @@
+---
+title: "PS0"
+author: "Joseph Davis Chamdani"
+date: "2025-09-25"
+output: html_document
+---
+
+The weather now in Seattle is nice but I suspect that next week will be gloomy.
+My Hometown, Jakarta is a lot hotter and more humid than Seattle.
