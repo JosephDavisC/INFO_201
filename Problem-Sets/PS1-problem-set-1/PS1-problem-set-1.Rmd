@@ -10,24 +10,24 @@ output: html_document
 ### **1.1**
 
 #### **1.1.1  Create a bullet list of (at least 3) colors**
-* Red
-* Green
-* Blue
+* Red 🔴
+* Green 🟢
+* Blue 🔵
 
 ---
 
 #### **1.1.2  Create a numbered list of (at least 3) cities**
-1. Seattle
-2. Jakarta
-3. Malang
+1. Seattle 🇺🇸
+2. Jakarta 🇮🇩
+3. Malang 🇮🇩
 
 ---
 
 #### **1.1.3  Create a pre-formatted text (at least 3 lines)**
 ```
-This is line one
-This is line two
-And here’s line three
+This is line 1
+This is line 2
+And here’s line 3
 ```
 
 ---
