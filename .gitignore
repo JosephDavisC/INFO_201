@@ -1,4 +1,4 @@
-# R/RStudio
+# ---- R/RStudio ----
 .Rhistory
 .Rapp.history
 .RData
@@ -6,25 +6,32 @@
 .Rproj.user/
 *.Rproj
 
-# knitr/rmarkdown artifacts
+# ---- macOS system files ----
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# ---- Windows system files ----
+Thumbs.db
+desktop.ini
+
+# ---- knitr/rmarkdown artifacts ----
 *_cache/
 cache/
 *_files/
 
-# renv
+# ---- renv ----
 renv/library/
 renv/staging/
+# !renv.lock
 
-# OS cruft
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Python/other temp
+# ---- Python/Notebooks ----
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
 
-# Temp/logs
+# ---- Logs / temporary ----
 *.log
 *.tmp
