@@ -1,8 +1,30 @@
-.Rproj.user
+# R/RStudio
 .Rhistory
+.Rapp.history
 .RData
 .Ruserdata
+.Rproj.user/
+*.Rproj
+
+# knitr/rmarkdown artifacts
+*_cache/
+cache/
+*_files/
+
+# renv
+renv/library/
+renv/staging/
+
+# OS cruft
 .DS_Store
-.Rprofile
-renv/
-renv.lock
+Thumbs.db
+desktop.ini
+
+# Python/other temp
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# Temp/logs
+*.log
+*.tmp
