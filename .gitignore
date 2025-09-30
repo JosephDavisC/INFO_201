@@ -1,10 +1,23 @@
-# ---- R/RStudio ----
+# ---- R / RStudio ----
 .Rhistory
 .Rapp.history
 .RData
 .Ruserdata
 .Rproj.user/
 *.Rproj
+
+# ---- RMarkdown / knitr artifacts ----
+*_cache/
+cache/
+*_files/
+
+# ---- renv (local only) ----
+renv/
+renv.lock
+
+# ---- Local-only files ----
+README.html
+.Rprofile
 
 # ---- macOS system files ----
 .DS_Store
@@ -17,17 +30,7 @@ Icon?
 Thumbs.db
 desktop.ini
 
-# ---- knitr/rmarkdown artifacts ----
-*_cache/
-cache/
-*_files/
-
-# ---- renv ----
-renv/library/
-renv/staging/
-# !renv.lock
-
-# ---- Python/Notebooks ----
+# ---- Python / notebooks ----
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
