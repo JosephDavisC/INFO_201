@@ -72,11 +72,10 @@ Its parent folder is `Problem-Sets`.
 ### **2.2**
 #### **2.2.1  Folder on Desktop**
 I made a folder on my Desktop called `info201_test_folder`. Inside, I dropped in:  
+
 * an image file (`Joseph_Chamdani.JPEG`)  
 * a non-image file (`info_201.txt`)  
 * another folder (`info201_another_folder`)  
-
-Just a simple test folder to practice with.
 
 ---
 
@@ -93,7 +92,7 @@ Here’s my sketch showing how the folders connect.
 ### **2.4**
 #### **2.4.1  Relative path of new folder**
 From my `.Rmd` file, the relative path to the Desktop folder is:  
-`../../../Desktop/info201_test_folder`
+`../../../../Desktop/info201_test_folder`
 
 ---
 
@@ -133,6 +132,7 @@ The absolute path to my homework folder is:
 
 The absolute path of the image I put in the test folder on my Desktop is:  
 `/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG`
+
 ---
 
 ### **3.3**
@@ -152,7 +152,7 @@ I’d say relative paths are better for homework. That way if I move or share my
 
 ### **3.5**
 #### **3.5.1  RStudio filename completion**
-In RStudio, you can start typing a filename inside quotes and hit Tab. It’ll autocomplete with the files in your working directory — super helpful so you don’t mistype long file names.
+In RStudio, you can start typing a filename inside quotes and hit Tab. It’ll autocomplete with the files in your working directory and it's helpful so you don’t mistype long file names.
 
 ---
 
@@ -164,7 +164,7 @@ In RStudio, you can start typing a filename inside quotes and hit Tab. It’ll a
 #### **4.1.1  My age**
 ```{r}
 my_age <- 18
-my_age
+print(paste("My age now is", my_age, "years old"))
 ```
 
 ---
@@ -173,7 +173,7 @@ my_age
 #### **4.2.1  Seconds in a year**
 ```{r}
 seconds_in_year <- 60 * 60 * 24 * 365
-seconds_in_year
+print(paste("There are", seconds_in_year, "seconds in a year"))
 ```
 
 ---
@@ -182,19 +182,19 @@ seconds_in_year
 #### **4.3.1  My age in seconds**
 ```{r}
 age_in_seconds <- my_age * seconds_in_year
-age_in_seconds
+print(paste("My age in seconds is", age_in_seconds, "seconds"))
 ```
 
 ---
 
 ### **4.4**
 #### **4.4.1  Typical human lifetime in seconds**
-I’ll assume a “typical” lifetime of about 80 years.  
+So I'll assume that a “typical” lifetime of about 78 years.  
 
 ```{r}
-lifetime_years <- 80
+lifetime_years <- 78
 lifetime_seconds <- lifetime_years * seconds_in_year
-lifetime_seconds
+print(paste("So a typical human lifetime is", lifetime_seconds, "seconds"))
 ```
 
 ---
@@ -203,7 +203,7 @@ lifetime_seconds
 
 ### **5.1**
 #### **5.1.1  Total points from all problem sets (including PS0)**
-There are 7 assignments (problem sets) worth 49% of the grade, so if I crush them all perfectly, that’s **49 points total**.
+There are 7 assignments (problem sets) worth 49% of the grade, so if I did them all perfectly, that’s **49 points total**.
 
 ---
 
@@ -221,7 +221,7 @@ The proposal itself is worth 4% of the final project grade. The exact date is on
 
 ### **5.4**
 #### **5.4.1  Quizzes true/false**
-Yep True 
+Yep True,
 The course has 2 quizzes, together worth 20% of the final grade.
 
 ---
@@ -234,7 +234,7 @@ Each student has **3 late days** for problem sets. After that, late submissions 
 
 ### **5.6**
 #### **5.6.1  Late days for labs**
-Labs have **no late days** — you either do them on time or lose the point.
+Labs have **no late days** you either do them on time or lose the point.
 
 ---
 
