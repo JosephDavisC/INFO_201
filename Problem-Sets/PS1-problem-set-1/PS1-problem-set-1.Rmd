@@ -92,7 +92,7 @@ Here’s my sketch showing how the folders connect.
 ### **2.4**
 #### **2.4.1  Relative path of new folder**
 From my `.Rmd` file, the relative path to the Desktop folder is:  
-`../../../../Desktop/info201_test_folder`
+`../../../../info201_test_folder`
 
 ---
 
@@ -115,6 +115,12 @@ And here’s me including the image directly from the Desktop folder:
 
 
 ![](../../../../info201_test_folder/Joseph_Chamdani.JPEG)
+
+*(Note: This uses a **relative path** that points outside my homework folder:  
+`../../../../info201_test_folder/Joseph_Chamdani.JPEG`.  
+It works on my computer, but may not display on another machine since they don’t have this Desktop folder.
+
+
 ---
 
 ## **3 Absolute path**
@@ -141,6 +147,11 @@ Here’s how it looks when included using the absolute path:
 
 ![](/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG)
 
+*(Note: This is the **absolute path** on my machine:  
+`/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG`.  
+Absolute paths are machine-specific, so this will not show up on another computer.)*
+
+
 
 ---
 
@@ -156,7 +167,6 @@ In RStudio, you can start typing a filename inside quotes and hit Tab. It’ll a
 
 ---
 
----
 
 ## **4 Variables**
 
@@ -215,7 +225,7 @@ There are 7 labs, each worth 1 point → **7 points total**.
 
 ### **5.3**
 #### **5.3.1  Deadline for Final Project Proposal**
-The proposal itself is worth 4% of the final project grade. The exact date is on Canvas under Assignments, but it’s due **early in the project timeline** (before the full final project).
+I think the Final Project Proposal due date is on **November 5 at 11:59 pm**.
 
 ---
 
