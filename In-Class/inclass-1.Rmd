@@ -1,0 +1,10 @@
+---
+title: "Intro to R"
+author: "Joseph Davis Chamdani"
+date: "2025-10-01"
+output: html_document
+---
+
+**Ping Pong Snoopy**
+
+![](ping-pong.jpg)
