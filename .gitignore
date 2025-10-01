@@ -41,3 +41,6 @@ __pycache__/
 
 # Ignore knitted html outputs
 *.html
+
+# Ignore rsconnect publishing artifacts
+rsconnect/
