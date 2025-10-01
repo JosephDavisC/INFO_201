@@ -38,3 +38,6 @@ __pycache__/
 # ---- Logs / temporary ----
 *.log
 *.tmp
+
+# Ignore knitted html outputs
+*.html
