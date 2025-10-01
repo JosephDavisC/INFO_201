@@ -107,6 +107,7 @@ Relative path: `screenshot.png`
 #### **2.6.1  Screenshot in RMarkdown**
 
 ![](screenshot.png)
+
 ---
 
 ### **2.7**
@@ -150,7 +151,6 @@ Here’s how it looks when included using the absolute path:
 *(Note: This is the **absolute path** on my machine:  
 `/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG`.  
 Absolute paths are machine-specific, so this will not show up on another computer.)*
-
 
 
 ---
@@ -225,7 +225,8 @@ There are 7 labs, each worth 1 point → **7 points total**.
 
 ### **5.3**
 #### **5.3.1  Deadline for Final Project Proposal**
-I think the Final Project Proposal due date is on **November 5 at 11:59 pm**.
+The Final Project Proposal due date is on **November 5 at 11:59 pm** from what
+I saw on the lab due date.
 
 ---
 
@@ -238,7 +239,7 @@ The course has 2 quizzes, together worth 20% of the final grade.
 
 ### **5.5**
 #### **5.5.1  Late days for Problem Sets**
-Each student has **3 late days** for problem sets. After that, late submissions lose 0.5% per hour. (Ouch.)
+Each student has **3 late days** for problem sets. After that, late submissions lose 0.5% per hour.
 
 ---
 
