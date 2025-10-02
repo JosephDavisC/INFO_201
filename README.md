@@ -1,19 +1,21 @@
 # INFO 201 - Coursework Repository
 
-This repository contains my homework, assignments, and projects for **INFO 201 (Foundations of Data Science)** at the University of Washington.
+This repository contains my homework, in class, assignments, and projects for **INFO 201 (Foundations of Data Science)** at the University of Washington.
 
 ---
 
 ## 📂 Structure
-Each assignment will have its own folder:
-- `PS0/` – Problem Set 0  
-- `PS1/` – Problem Set 1  
-- `PS2/` – Problem Set 2  
-- ...and so on
+Each assignment/problem set has its own folder:
 
-Inside each folder, you’ll typically find:
-- `.Rmd` files (R Markdown submissions)  
-- `.html` or `.pdf` files (rendered outputs)  
+- `PS0/` → Problem Set 0  
+- `PS1/` → Problem Set 1  
+- `PS2/` → Problem Set 2  
+- ...and so on  
+
+Inside each folder you’ll typically find:
+- `.Rmd` → R Markdown source file (submission file)  
+- `.html` → Knitted output (what the grader checks)  
+- `.png` / `.jpeg` → Images used in problem sets (sketches, screenshots, etc.)
 
 ---
 
