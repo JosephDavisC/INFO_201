@@ -26,8 +26,8 @@ output: html_document
 #### **1.1.3  Create a pre-formatted text (at least 3 lines)**
 ```
 This is line 1
-This is line 2
-And here’s line 3
+  This is line 2
+    And here’s line 3
 ```
 
 ---
@@ -174,7 +174,7 @@ In RStudio, you can start typing a filename inside quotes and hit Tab. It’ll a
 #### **4.1.1  My age**
 ```{r}
 my_age <- 18
-print(paste("My age now is", my_age, "years old"))
+paste("My age now is", my_age, "years old")
 ```
 
 ---
@@ -183,7 +183,7 @@ print(paste("My age now is", my_age, "years old"))
 #### **4.2.1  Seconds in a year**
 ```{r}
 seconds_in_year <- 60 * 60 * 24 * 365
-print(paste("There are", seconds_in_year, "seconds in a year"))
+paste("There are", seconds_in_year, "seconds in a year")
 ```
 
 ---
@@ -192,7 +192,7 @@ print(paste("There are", seconds_in_year, "seconds in a year"))
 #### **4.3.1  My age in seconds**
 ```{r}
 age_in_seconds <- my_age * seconds_in_year
-print(paste("My age in seconds is", age_in_seconds, "seconds"))
+paste("My age in seconds is", age_in_seconds, "seconds")
 ```
 
 ---
@@ -204,7 +204,7 @@ So I'll assume that a “typical” lifetime of about 78 years.
 ```{r}
 lifetime_years <- 78
 lifetime_seconds <- lifetime_years * seconds_in_year
-print(paste("So a typical human lifetime is", lifetime_seconds, "seconds"))
+paste("So a typical human lifetime is", lifetime_seconds, "seconds")
 ```
 
 ---

@@ -1,0 +1,34 @@
+---
+title: "Intro to R"
+author: "Joseph Davis Chamdani"
+date: "2025-10-01"
+output: html_document
+---
+
+**Ping Pong Snoopy**
+
+![](ping-pong.jpg)
+
+```
+Line 1
+  Line 2
+    Line 3
+```
+
+``` {r}
+1+1
+```
+
+```{r}
+lightyear <- 3000000 * 60 * 60 * 365
+print(paste("Lighyear =", lightyear))
+```
+
+```{r}
+2 * lightyear
+```
+
+```{r}
+paste(lightyear)
+```
+
