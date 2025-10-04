@@ -32,3 +32,8 @@ print(paste("Lighyear =", lightyear))
 paste(lightyear)
 ```
 
+```{r}
+1/49*49 == 0.99
+``` 
+
+

@@ -118,8 +118,7 @@ And here’s me including the image directly from the Desktop folder:
 ![](../../../../info201_test_folder/Joseph_Chamdani.JPEG)
 
 *(Note: This uses a **relative path** that points outside my homework folder:  
-`../../../../info201_test_folder/Joseph_Chamdani.JPEG`.  
-It works on my computer, but may not display on another machine since they don’t have this Desktop folder.
+`../../../../info201_test_folder/Joseph_Chamdani.JPEG`.)*
 
 
 ---
@@ -149,8 +148,7 @@ Here’s how it looks when included using the absolute path:
 ![](/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG)
 
 *(Note: This is the **absolute path** on my machine:  
-`/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG`.  
-Absolute paths are machine-specific, so this will not show up on another computer.)*
+`/Users/JosephWork/Desktop/info201_test_folder/Joseph_Chamdani.JPEG`.)*
 
 
 ---
