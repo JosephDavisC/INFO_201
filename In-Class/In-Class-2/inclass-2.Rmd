@@ -1,7 +1,41 @@
 ---
 title: "inclass-2"
 author: "Joseph Davis Chamdani"
-date: "2025-10-01"
+date: "2025-10-06"
 output: html_document
 ---
+
+```{r}
+s <- "here\nthere"
+```
+
+
+```{r}
+cat(s, "\n", 1+1, "\n")
+```
+
+```{r}
+for (i in 1:10) {
+    i2 <- i^2
+    cat (i, "Square is", i2, "\n")
+}
+```
+
+```{r}
+for (n in 1:10){ 
+    n <- "^^^^^^^^"
+    cat (n, "\n")
+  }
+```
+```{r}
+for (line in 1:6){ 
+    num_rows <- line
+    for (i in 1:num_rows){
+      cat("^")
+    }
+    cat("\n")
+  }
+```
+
+
 
