@@ -1,0 +1,54 @@
+---
+title: "inclass-3"
+author: "Joseph Davis Chamdani"
+date: "2025-10-08"
+output: html_document
+---
+
+```{r}
+nLines <- 20
+for (iLines in 1:nLines) {
+  nO <- iLines
+  nDot <- nLines - iLines + 1
+  
+  for (iO in 1:nO) {
+    cat("O")
+  }
+  for (iDot in 1:nDot) {
+    cat(".")
+  }
+  cat("\n")
+}
+
+```
+```{r}
+N <- 11
+
+if (N %% 2) {
+  cat(N, "is a prime number")
+} else
+{
+  cat(N, "is an even number")
+}
+
+```
+```{r}
+i <- 1
+
+for (i in i:11) {
+  if (i %% 2) {
+    cat(i , "is a prime number")
+  } else
+  {
+    cat(i, "is a even")
+  }
+  cat("\n")
+}
+```
+```{r}
+paste("Hi ", "there ", sep = " or ")
+```
+
+
+
+
