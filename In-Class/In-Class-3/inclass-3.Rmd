@@ -49,6 +49,38 @@ for (i in i:11) {
 paste("Hi ", "there ", sep = " or ")
 ```
 
+```{r}
+praise("I am so ${ADVERB_MANNER} today!")
+```
+
+```{r}
+plus <- function(x,y){
+  z <- x+y
+  return(z)
+}
+
+plus(2,2)
+
+```
+
+```{r}
+ft <- 0.3048
+inc <- 0.0254
+
+ft_to_m <- function(x){
+  cat(x, "ft is equal to", x*ft, "m \n")
+}
+
+ft_to_inc <- function(x){
+  cat(x, "in is equal to", x*inc, "m \n")
+}
+
+ft_to_m(3)
+ft_to_inc(3)
+
+
+```
+
 
 
 
