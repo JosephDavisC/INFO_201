@@ -1,0 +1,6 @@
+---
+title: "inclass-4"
+author: "Joseph Davis Chamdani"
+date: "2025-10-13"
+output: html_document
+---
