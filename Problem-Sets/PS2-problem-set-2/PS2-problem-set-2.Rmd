@@ -1,6 +1,7 @@
 ---
-title: "inclass-4"
+title: "PS2-problem-set-2"
 author: "Joseph Davis Chamdani"
-date: "2025-10-13"
+date: "2025-10-14"
 output: html_document
 ---
+
