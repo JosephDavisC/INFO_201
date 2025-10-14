@@ -9,9 +9,9 @@ output: html_document
 
 ---
 
-### 1.1 Create vectors
+### **1.1 Create vectors**
 
-#### 1.1.1 Six movies you like
+#### **1.1.1 Six movies you like**
 
 ```{r}
 movies <- c("Iron Man", "Superman", "Ant Man",
@@ -20,7 +20,7 @@ movies
 ```
 ---
 
-#### 1.1.2 First three movies (indexing)
+#### **1.1.2 First three movies (indexing)**
 ```{r}
 first_three <- movies[1:3]
 first_three
@@ -28,7 +28,7 @@ first_three
 
 ---
 
-#### 1.1.3 Add "is a great movie!" to each element (string ops)
+#### **1.1.3 Add "is a great movie!" to each element (string ops)**
 ```{r}
 movies_great <- paste(movies, " is a great movie!")
 movies_great
@@ -36,28 +36,28 @@ movies_great
 
 ---
 
-#### 1.1.4 All movies except the 4th (indexing)
+#### **1.1.4 All movies except the 4th (indexing)**
 ```{r}
 movies_no4 <- movies[-4]
 movies_no4
 ```
 ---
 
-#### 1.1.5 Numbers 40 through 49 (inclusive)
+#### **1.1.5 Numbers 40 through 49 (inclusive)**
 ```{r}
 numbers <- 40:49
 numbers
 ```
 ---
 
-#### 1.1.6 How many numbers? (length)
+#### **1.1.6 How many numbers? (length)**
 ```{r}
 len_numbers <- length(numbers)
 len_numbers
 ```
 ---
 
-#### 1.1.7 Mean of numbers
+#### **1.1.7 Mean of numbers**
 ```{r}
 mean_numbers <- mean(numbers)
 mean_numbers
@@ -65,7 +65,7 @@ mean_numbers
 
 ---
 
-#### 1.1.8 Another vector: 70 through 79 (inclusive)
+#### **1.1.8 Another vector: 70 through 79 (inclusive)**
 ```{r}
 more_numbers <- 70:79
 more_numbers
@@ -73,7 +73,7 @@ more_numbers
 
 ---
 
-#### 1.1.9 Combine both number vectors
+#### **1.1.9 Combine both number vectors**
 ```{r}
 all_numbers <- c(numbers, more_numbers)
 all_numbers
@@ -81,18 +81,19 @@ all_numbers
 
 ---
 
-### 1.2 Logical Indexing
+### **1.2 Logical Indexing**
 
-#### 1.2.1 Create logical vector: numbers larger than 70
+#### **1.2.1 Create logical vector: numbers larger than 70**
 
 ```{r}
 iLogical <- all_numbers > 70
 iLogical
 ```
+The TRUE/FALSE means that if it's true it's above 70 if it's false it's below 70.
 
 ---
 
-#### 1.2.2 Compute sum of iLogical
+#### **1.2.2 Compute sum of iLogical**
 
 ```{r}
 sum_iLogical <- sum(iLogical)
@@ -100,7 +101,7 @@ sum_iLogical
 ```
 ---
 
-#### 1.2.3 Use iLogical variable to extract only those numbers that are larger than 70
+#### **1.2.3 Use iLogical variable to extract only those numbers that are larger than 70**
 
 ```{r}
 larger_than_70 <- all_numbers[iLogical]
@@ -109,21 +110,21 @@ larger_than_70
 
 ---
 
-#### 1.2.4 Check if they look correct
+#### **1.2.4 Check if they look correct**
 ```{r}
 larger_than_70
 ```
 
 ---
 
-#### 1.2.5 Compute the length of this subset
+#### **1.2.5 Compute the length of this subset**
 ```{r}
 length(larger_than_70)
 ```
 
 ---
 
-#### 1.2.6 Use logical NOT (!) to extract numbers that do NOT exceed 70
+#### **1.2.6 Use logical NOT (!) to extract numbers that do NOT exceed 70**
 
 ```{r}
 not_exceed_70 <- all_numbers[!iLogical]
@@ -132,14 +133,14 @@ not_exceed_70
 
 ---
 
-#### 1.2.7 Print squares of numbers that do not exceed 70
+#### **1.2.7 Print squares of numbers that do not exceed 70**
 
 ```{r}
 not_exceed_70^2
 ```
 ---
 
-#### 1.2.8 Compute and print squares of all numbers that do not exceed 70
+#### **1.2.8 Compute and print squares of all numbers that do not exceed 70**
 
 ```{r}
 is_even <- all_numbers %% 2 == 0
@@ -147,7 +148,7 @@ is_even
 ```
 ---
 
-#### 1.2.9 Use logical indexing to print only even numbers
+#### **1.2.9 Use logical indexing to print only even numbers**
 
 ```{r}
 even_numbers <- all_numbers[is_even]
@@ -156,7 +157,7 @@ even_numbers
 
 ---
 
-#### 1.2.10 Between 1 and 200: 1/n * n ≠ 1 (since 1/n * n = 1 for all n except 0)
+#### **1.2.10 Between 1 and 200: 1/n * n ≠ 1 (since 1/n * n = 1 for all n except 0)**
 
 ```{r}
 n <- 1:200
@@ -166,7 +167,7 @@ logic_n
 
 --- 
 
-#### 1.2.11 Count how many such numbers you have between 1 and 1000
+#### **1.2.11 Count how many such numbers you have between 1 and 1000**
 
 ```{r}
 n2 <- 1:1000
@@ -175,7 +176,7 @@ sum(logic_n2)
 ```
 ___
 
-#### 1.2.12 Extra Credit 
+#### **1.2.12 Extra Credit (Python) **
 
 ```{python}
 numbers = range(1, 201)
@@ -186,9 +187,9 @@ print("Count:", len(wrong_nums))
 
 ---
 
-### 1.3 Modifying vectors
+### **1.3 Modifying vectors**
 
-#### 1.3.1 Create a vector of numbers −5, −4, . . . , 4, 5.
+#### **1.3.1 Create a vector of numbers −5, −4, . . . , 4, 5.**
 
 ```{r}
 nums <- -5:5
@@ -197,7 +198,7 @@ nums
 
 ---
 
-#### 1.3.2 Replace all negative numbers with “0”
+#### **1.3.2 Replace all negative numbers with “0”**
 
 ```{r}
 nums <- -5:5
@@ -207,7 +208,7 @@ nums
 
 ---
 
-#### 1.3.3 Now implement ReLU function:
+#### **1.3.3 Now implement ReLU function:**
 
 ```{r}
 relu <- function(x) {
@@ -218,7 +219,7 @@ relu <- function(x) {
 
 ---
 
-#### 1.3.4 Test ReLU with example vectors
+#### **1.3.4 Test ReLU with example vectors**
 
 ```{r}
 relu(c(-2, -1, 0, 1, 2))
@@ -227,35 +228,13 @@ relu(c(-10, 5, -3, 7, 0))
 
 ---
 
-#### 1.3.5 Implement absolute value function (custom)
+#### **1.3.5 Implement absolute value function (custom)**
 
 ```{r}
 
 ```
 
 ---
-
-#### 1.3.6 
-
-```{r}
-
-```
-
----
-
-#### 1.3.7
-
-```{r}
-
-```
-
----
-
-#### 1.3.8
-
-```{r}
-
-```
 
 
 
