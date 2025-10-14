@@ -1,0 +1,77 @@
+---
+title: "inclass-4"
+author: "Joseph Davis Chamdani"
+date: "2025-10-13"
+output: html_document
+---
+
+```{r}
+a <- c(1,2,3,4)
+a
+```
+```{r}
+a*2
+```
+
+
+```{r}
+b <- c(10,20,30,40)
+a*b
+```
+```{r}
+"hi!"
+```
+```{r}
+1:100
+```
+```{r}
+a
+length(a)
+```
+```{r}
+colors <- c("purple", "gold", "blue")
+colors
+```
+```{r}
+1:10
+```
+```{r}
+colors2 <- c("gray","lawngreen","pink")
+colors2
+```
+```{r}
+allColor <- c(colors, colors2)
+allColor
+```
+```{r}
+s <- c()
+for(n in 1:10) {
+  s <- c(s, n^2)
+}
+s
+```
+```{r}
+(1:10)^2
+```
+```{r}
+v1 <- c(1,1,1)
+v2 <- c(1,2,3)
+v1+v2
+v1*v2
+(v1+v2)/(v1+v1)
+```
+```{r}
+money <- c(100,200,300)
+price <- c(50,150,250)
+money >= 200 & price <= 200
+```
+
+```{r}
+customer_age <- c(16,20,24)
+cashier_name <- c("Yu Huang", "Guanyin", "Yu Huang")
+
+customer_age >=21 | cashier_name == "Guanyin"
+```
+
+
+
