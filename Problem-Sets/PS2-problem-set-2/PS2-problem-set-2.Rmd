@@ -562,7 +562,7 @@ for (i in 1:(length(nums2) - 1)) {
 
 ---
 
-![](jo-sticker.PNG){width=18%}
+![](jo-sticker.PNG){width=19%}
 
 
 
