@@ -1,6 +1,6 @@
 ---
 title: "lab03-functions-vectors"
-author: "Joseph Davis Chamdani"
+author: "Joseph Chamdani, Winson Teh, Kenneth Wu, Hanjun Ma"
 date: "2025-10-14"
 output: html_document
 ---
@@ -221,4 +221,5 @@ less_than_10000_countries <- population < 10000
 asia_small <- continent == "Asia" & less_than_10000_countries
 country[asia_small]
 ```
+
 
