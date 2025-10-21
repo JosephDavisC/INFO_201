@@ -9,20 +9,49 @@ output: html_document
 
 ---
 
-### 1.1
-
-Download the the salary data from canvas (files/data/salaries.csv). Load it into R using
-read_delim().
+### **1.1 Download the the salary data from canvas (files/data/salaries.csv). Load it into R using read_delim().**
 
 ```{r}
+library(tidyverse)
 
+salaries <- read_delim("salaries.csv", delim = ",")
 ```
 
 ---
 
-### 1.2
+### **1.2 Did you load it correctly?**
 
-Did you load it correctly?
+---
+
+#### a) How many rows and columns are there?
+
+```{r} 
+dim(salaries)          
+nrow(salaries)        
+ncol(salaries)   
+```
+
+---
+
+#### b) What are the variable names? Do these make sense?
+
+```{r} 
+names(salaries)        
+colnames(salaries) 
+```
+
+---
+
+#### c) Show the first few lines of data.
+
+```{r} 
+head(salaries)        
+head(salaries, 10)  
+```
+
+---
+
+### **1.3 Create a column ’raise’ that stores the size of the raise between 2024 and 2025. (Salary difference between 2024 and 2025).**
 
 ```{r}
 
