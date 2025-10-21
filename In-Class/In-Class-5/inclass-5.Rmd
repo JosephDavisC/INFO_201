@@ -1,0 +1,37 @@
+---
+title: "inclass-5"
+author: "Joseph Davis Chamdani"
+date: "2025-10-15"
+output: html_document
+---
+
+```{r}
+incomes <- c(30,45,70,110,55)
+
+raises <- 1.1*incomes
+lowincome <- incomes < 70
+incomes[lowincome] <- raises[lowincome]
+incomes
+```
+
+```{r}
+
+testTemp <- function(t) {
+  if(t>120){
+    cat("Too Hot!")
+  }else{
+    cat("Perfect")
+  }
+}
+
+testTemp(80)
+testTemp(200)
+
+```
+
+```{r}
+t <- c(80,200)
+testTemp(t)
+```
+
+

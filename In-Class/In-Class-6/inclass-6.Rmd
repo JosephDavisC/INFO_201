@@ -1,0 +1,62 @@
+---
+title: "inclass-6"
+author: "Joseph Davis Chamdani"
+date: "2025-10-20"
+output: html_document
+---
+
+```{r}
+v <- 1:10
+```
+
+
+```{r}
+odd <- function(v) {
+  v[v %% 2 == 1]
+}
+odd(11:2)
+```
+
+```{r}
+v <- 1:10
+iOdd <- v %% 2 == 1
+v[iOdd] <- -v[iOdd]
+v[iOdd]
+```
+
+```{r}
+v <- c(1,2,77,4,-1,4,5,-3)
+min(v)
+```
+
+```{r}
+min <- Inf 
+for (n in v) {
+  cat(n, "\n")
+}
+```
+
+```{r}
+min <- Inf 
+for (n in v) {
+  cat(n, " ")
+  if(n < min) {
+    min <- n
+    cat("new min is", n)
+  }
+  cat("\n")
+}
+min
+
+
+```
+
+```{r}
+for(i in 1:(length(v) - 1)) {
+  if (v[i+1 > v[i]]) {
+    cat(i, "next larger")
+  }
+}
+```
+
+
