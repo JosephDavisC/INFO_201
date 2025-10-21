@@ -1,0 +1,31 @@
+---
+title: "lab04-data-frame-basics"
+author: "Joseph Chamdani, Winson Teh, Kenneth Wu, Hanjun Ma"
+date: "2025-10-21"
+output: html_document
+---
+
+## **HR Data**
+
+---
+
+### 1.1
+
+Download the the salary data from canvas (files/data/salaries.csv). Load it into R using
+read_delim().
+
+```{r}
+
+```
+
+---
+
+### 1.2
+
+Did you load it correctly?
+
+```{r}
+
+```
+
+---
