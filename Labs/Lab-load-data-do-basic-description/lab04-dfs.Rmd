@@ -150,7 +150,7 @@ sum(v %% 2 == 1)
 ```
 ---
 
-### **2.1.2 Now write a function odds(v) that returns the number of odd numbers in the vector v. Show that it works with the vector above in Question 1.*
+### **2.1.2 Now write a function odds(v) that returns the number of odd numbers in the vector v. Show that it works with the vector above in Question 1.**
 
 ```{r}
 odd <- function(v) {
@@ -161,7 +161,7 @@ odd(v)
 
 ---
 
-### **2.1.3 Now compute the percentage of odd numbers in the vector.*
+### **2.1.3 Now compute the percentage of odd numbers in the vector.**
 
 ```{r}
 per <- function(x) {

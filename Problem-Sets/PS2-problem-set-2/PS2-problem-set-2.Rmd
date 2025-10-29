@@ -549,15 +549,13 @@ abs2(nums)
 #### **3.3.6 Take a numeric vector c(1, 4, 8, 3, 2, 3). Use either a for-loop or ifelse, and indexing to print whether the following element is larger or smaller than the previous one.**
 
 ```{r}
-nums2 <- c(1, 4, 8, 3, 2, 3)
+nums <- c(1, 4, 8, 3, 2, 3)
 
-for (i in 1:(length(nums2) - 1)) {
-  if (nums2[i + 1] > nums2[i]) {
-    cat(nums2[i], ": smaller\n")
-  } else if (nums2[i + 1] < nums2[i]) {
-    cat(nums2[i], ": larger\n")
+for (i in 1:(length(nums) - 1)) {
+  if (nums[i + 1] > nums[i]) {
+    cat(nums[i], ": smaller\n")
   } else {
-    cat(nums2[i], ": equal\n")
+    cat(nums[i], ": larger\n")
   }
 }
 ```

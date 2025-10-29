@@ -1,0 +1,195 @@
+---
+title: "lab05-dplyr_q"
+author: "Joseph Chamdani, Winson Teh, Kenneth Wu, Hanjun Ma"
+date: "2025-10-28"
+output: html_document
+---
+
+## **1 Load and describe data**
+
+---
+
+### **1.1 Load the dataset covid-scandinavia-nogrowth.csv. Be sure to load the necessary libraries and use the right command!**
+
+```{r}
+library(dplyr)
+library(readr)
+
+covid_data <-  read_delim("covid-scandinavia-nogrowth.csv", delim = "\t")
+```
+
+---
+
+### **1.2 Did you load the data correctly?**
+
+---
+
+#### **a) Print a few lines**
+
+```{r}
+head(covid_data)
+tail(covid_data)
+```
+---
+
+#### b) **How many rows/columns does your dataset contain?**
+
+```{r}
+dim(covid_data)
+```
+
+---
+
+#### c) **Does the dataset look good?**
+
+```{r}
+summary(covid_data)
+```
+---
+
+### **1.3 What are the column names? Are they the same as listed in the instructions? **
+
+```{r}
+colnames(covid_data)
+```
+
+---
+
+### **1.4 What does a row in this dataset represent?**
+
+Each row represents a single observation for a specific country, date and case type
+
+---
+
+## **2 Compare Denmark and Norway**
+
+---
+
+### **2.1 Select only the columns you need below.**
+
+```{r}
+covid_data %>% 
+  select (country)
+```
+---
+
+### **2.2 Filter to keep only DK and NO.**
+```{r}
+covid_data %>% 
+  filter(country %in%c("Denmark","Norway")) %>% 
+  select(country, date)
+```
+
+---
+
+### **2.3 Filter to keep only 2020, and only deaths. Hint: you can use functions year(), month() and day() to extract years/months from dates**
+```{r}
+library(lubridate)
+
+covid_data <- read.delim("covid-scandinavia-nogrowth.csv") %>%
+  mutate(date = as.Date(date)) %>%       
+  filter(year(date) == 2020,           
+         type == "Deaths")            
+covid_data
+```
+---
+
+### **2.3 Filter to keep only 2020, and only deaths. Hint: you can use functions year(), month() and day() to extract years/months from dates**
+
+```{r}
+covid_data <- read.delim("covid-scandinavia-nogrowth.csv", sep = "\t") %>%
+  mutate(date = as.Date(date, format = "%Y-%m-%d")) %>%
+  filter(type == "Deaths",
+         country %in% c("Denmark", "Norway"),
+         month(date) %in% c(4, 10),             
+         day(date) <= 31) %>%
+  mutate(period = case_when(
+    month(date) == 4 & day(date) <= 30 ~ paste0(year(date), "-04-30"),
+    month(date) == 10 & day(date) <= 31 ~ paste0(year(date), "-10-31")
+  )) %>%
+  group_by(country, period) %>%
+  summarise(total_deaths = max(count), .groups = "drop") %>%
+  arrange(period, country)
+
+print(covid_data)
+```
+
+---
+
+## **3 Average growth each month**
+
+---
+
+### **3.1 Compute daily growth in number of deaths, separately for each country **
+
+```{r}
+deaths <- covid_data %>%
+  filter(type == "Deaths",
+         date >= "2020-04-01",
+         date <= "2020-06-30")
+
+deaths$date <- as.Date(deaths$date)
+
+deaths <- deaths %>%
+  group_by(country) %>%
+  arrange(date, .by_group = TRUE) %>%
+  mutate(daily_growth = count - lag(count)) %>%
+  ungroup()
+
+deaths
+```
+---
+
+### **3.2 Now compute average growth each month–calculate the monthly averages of the growth numbers you just computed. (Separately by country!) **
+
+```{r}
+deaths$month <- format(deaths$date, "%Y-%m")
+
+monthly <- deaths %>%
+  group_by(country, month) %>%
+  summarise(
+    avg_monthly_growth = mean(daily_growth, na.rm = TRUE),
+    population = first(population),
+    .groups = "drop"
+  )
+
+monthly
+```
+
+---
+
+### **3.3 Now use the population column to convert the average monthly growth to growth per 10 million inhabitants. This makes the results comparable across the countries, and the numbers look easy to understand. **
+
+```{r}
+monthly <- monthly %>%
+  mutate(growth_per_10mil = avg_monthly_growth / (population / 1e7))
+
+monthly
+```
+
+---
+
+### **3.4 Re-order the results in a way that it is first ordered by date, and there after by country.**
+
+```{r}
+monthly <- monthly %>%
+  arrange(month, country)
+
+monthly
+```
+
+---
+
+### **3.5 Which country, out of these four, has highest death rate relative to population?**
+
+```{r}
+highest <- monthly %>%
+  group_by(country) %>%
+  summarise(avg_growth_10mil = mean(growth_per_10mil, na.rm = TRUE),
+            .groups = "drop") %>%
+  arrange(desc(avg_growth_10mil))
+
+highest
+```
+---
+
