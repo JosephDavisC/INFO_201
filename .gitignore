@@ -43,4 +43,12 @@ __pycache__/
 *.html
 
 # Ignore rsconnect publishing artifacts
+<<<<<<< HEAD
 rsconnect/
+=======
+rsconnect/.Renviron
+.Reviron
+*.env
+*.apikey
+.env
+>>>>>>> be0ffe594095c655d9d71b600637a3bbad7e5d0a

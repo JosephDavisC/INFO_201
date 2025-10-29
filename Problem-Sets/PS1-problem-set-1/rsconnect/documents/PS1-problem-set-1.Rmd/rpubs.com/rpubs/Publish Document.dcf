@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/1350721/fdcbf67349434446b5058aae1bd7f118
+bundleId: https://api.rpubs.com/api/v1/document/1350721/fdcbf67349434446b5058aae1bd7f118
+url: http://rpubs.com/JosephDavisC/1350721
+version: 1
