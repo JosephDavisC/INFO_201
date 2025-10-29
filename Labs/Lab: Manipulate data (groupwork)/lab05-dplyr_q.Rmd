@@ -68,8 +68,8 @@ Each row represents a single observation for a specific country, date and case t
 ### **2.1 Select only the columns you need below.**
 
 ```{r}
-covid_data %>% 
-  select (country)
+covid_data %>%
+  select(country, date, type, count)
 ```
 ---
 
@@ -86,22 +86,29 @@ covid_data %>%
 ```{r}
 library(lubridate)
 
-covid_data <- read.delim("covid-scandinavia-nogrowth.csv") %>%
-  mutate(date = as.Date(date)) %>%       
-  filter(year(date) == 2020,           
-         type == "Deaths")            
-covid_data
+
+covid_data <- read.delim("covid-scandinavia-nogrowth.csv", sep = "\t") %>%
+  mutate(date = as.Date(date)) %>%
+  filter(year(date) == 2020,
+         type == "Deaths")
+
+covid_preview <- covid_data %>%
+  group_by(country) %>%
+  slice_head(n = 5) %>%
+  ungroup()
+
+covid_preview
 ```
 ---
 
-### **2.3 Filter to keep only 2020, and only deaths. Hint: you can use functions year(), month() and day() to extract years/months from dates**
+### **2.4 Filter to keep only 2020, and only deaths. Hint: you can use functions year(), month() and day() to extract years/months from dates**
 
 ```{r}
-covid_data <- read.delim("covid-scandinavia-nogrowth.csv", sep = "\t") %>%
+covid_compare <- read.delim("covid-scandinavia-nogrowth.csv", sep = "\t") %>%
   mutate(date = as.Date(date, format = "%Y-%m-%d")) %>%
   filter(type == "Deaths",
          country %in% c("Denmark", "Norway"),
-         month(date) %in% c(4, 10),             
+         month(date) %in% c(4, 10),
          day(date) <= 31) %>%
   mutate(period = case_when(
     month(date) == 4 & day(date) <= 30 ~ paste0(year(date), "-04-30"),
@@ -110,8 +117,7 @@ covid_data <- read.delim("covid-scandinavia-nogrowth.csv", sep = "\t") %>%
   group_by(country, period) %>%
   summarise(total_deaths = max(count), .groups = "drop") %>%
   arrange(period, country)
-
-print(covid_data)
+covid_compare
 ```
 
 ---
