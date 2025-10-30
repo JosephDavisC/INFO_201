@@ -77,7 +77,7 @@ for (nm in names(data)) {
       nm,
       " | class:", class(x)[1],
       " | N/As:", sum(is.na(x)),
-      " | mean: (non-numeric)\n"
+      " | mean: (not numeric)\n"
     )
   }
 }
@@ -130,14 +130,14 @@ least_growth
 ```{r}
 improved_50 <- sum(data$growth > 50, na.rm = TRUE)
 improved_50
-
 ```
 
 ---
 
 #### **1.2.5 How many countries were there were LE decreased over this time period?**
 ```{r}
-
+decreased <- sum(data$growth < 0, na.rm = TRUE)
+decreased
 ```
 
 ---
@@ -145,7 +145,14 @@ improved_50
 #### **1.2.6 Write a function countryChange() that takes in a country’s name as an argument, and returns it’s LE growth from 1960 to 2019.**
 
 ```{r}
+countryChange <- function(country_name) {
+result <- data %>% filter(name == country_name) %>% pull(growth)
+return(result)
+}
 
+cat("Sweden:", countryChange("Sweden"), "\n")
+cat("Yemen:", countryChange("Yemen"), "\n")
+cat("Indonesia:", countryChange("Indonesia"), "\n")
 ```
 ---
 
@@ -154,7 +161,10 @@ improved_50
 #### **1.3.1 How many regions are there in data? Which regions are those? Compute those from data.**
 
 ```{r}
+n_regions <- n_distinct(data$region)
+n_regions
 
+unique(data$region)
 ```
 
 ---
@@ -162,7 +172,10 @@ improved_50
 #### **1.3.2 Compute average LE in Americas in 1960.**
 
 ```{r}
-
+amer_1960 <- data %>%
+  filter(region == "Americas") %>%
+  summarise(avg_le1960 = mean(le1960, na.rm = TRUE))
+amer_1960
 ```
 
 ---
@@ -170,8 +183,13 @@ improved_50
 #### **1.3.3 For “Asia”, compute both average LE in 1960 and average LE growth**
 
 ```{r}
-
-
+asia <- data %>%
+  filter(region == "Asia") %>%
+  summarise(
+    avg_le1960 = mean(le1960, na.rm = TRUE),
+    avg_growth = mean(growth, na.rm = TRUE)
+  )
+asia
 ```
 
 ---
@@ -179,7 +197,16 @@ improved_50
 #### **1.3.4 Use group_by() to compute a data frame that contains each region’s: a) average LE in 1960; and b) LE growth over the time period. Explain what does the table tell about the world development.**
 
 ```{r}
+grouped_data <- group_by(data, region)
 
+region_summary <- summarise(
+  grouped_data,
+  avg_1960_LE = mean(le1960, na.rm = TRUE),
+  avg_LE_growth = mean(growth, na.rm = TRUE)
+)
+
+region_summary <- arrange(region_summary, desc(avg_LE_growth))
+region_summary
 ```
 
 ---
@@ -191,16 +218,24 @@ improved_50
 #### **2.1 Create a well labeled plot (readable title, x-axis, y-axis) showing Life expectancy in 1960 v.s. Change in life expectancy for each country (Question 1.3.4 was about region averages, not countries)**
 
 ```{r}
+x <- data$le1960
+y <- data$growth
 
-
+plot(x, y,
+main = "Life expectancy (1960) vs. % change to 2019 — by country",
+xlab = "Life expectancy in 1960 (years)",
+ylab = "Change in life expectancy 1960→2019 (%)",
+pch = 16, 
+cex = 0.8, 
+col = "blue")
+abline(h = 0, lty = 2) 
 ```
 
 ---
 
 #### **2.2 What do you notice on the plot? How do you interpret the observed relationship?**
-```{r}
 
-```
+I noticed that countries with lower life expectancy in 1960 tend to have higher growth by 2019. The points form a downward slope, which means countries that started off lower caught up more quickly over time. A few countries stand out as outliers with really high growth, while some barely changed or even decreased slightly.
 
 --- 
 
@@ -214,7 +249,11 @@ improved_50
 
 #### **3.1.1 Load the dataset and check that it looks good.**
 ```{r}
+library(readr)
 
+flights <- read_delim("nycflights13.csv")
+
+head(flights, 5)
 
 ```
 
@@ -222,18 +261,15 @@ improved_50
 
 #### **3.1.2 How many rows and columns do we have?**
 ```{r}
-
-
+nrow(flights)
+ncol(flights)
 ```
 
 ---
 
 #### **3.1.3 What does a row in this dataset represent?**
 
-```{r}
-
-
-```
+A single row represents one flight, including details such as the date, departure and arrival times, origin, destination, distance, and delays for that flight.
 
 ---
 
@@ -243,7 +279,7 @@ improved_50
 
 #### **3.2.1 How many missing delay values are there in data? Do you think this is a problem for our analysis below?**
 ```{r}
-
+sum(is.na(flights$dep_delay))
 ```
 
 ---
@@ -251,6 +287,10 @@ improved_50
 #### **3.2.2 Remove all rows with missing delay values from the dataset. How many rows do you have now?**
 
 ```{r}
+flights_clean <- flights %>%
+filter(!is.na(dep_delay))
+
+nrow(flights_clean)
 
 ```
 
@@ -259,7 +299,7 @@ improved_50
 #### **3.2.3 Are there any implausible values in the delay variable?**
 
 ```{r}
-
+summary(flights_clean$dep_delay)
 ```
 
 ---
@@ -267,7 +307,9 @@ improved_50
 #### **3.2.4 Compute the average delay to Los Angeles (airport code LAX)**
 
 ```{r}
-
+flights_clean %>%
+filter(dest == "LAX") %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
 ```
 
 ---
@@ -275,7 +317,11 @@ improved_50
 #### **3.2.5 Which three destinations are the worst ones in terms of the longest average delay? Print the airport code and the average delay**
 
 ```{r}
-
+flights_clean %>%
+group_by(dest) %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>%
+arrange(desc(avg_delay)) %>%
+head(3)
 ```
 
 ---
@@ -283,7 +329,9 @@ improved_50
 #### **3.2.6 Compute and print the average delay by month**
 
 ```{r}
-
+flights_clean %>%
+group_by(month) %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
 ```
 
 ---
@@ -291,6 +339,10 @@ improved_50
 #### **3.2.7 Compute the average delay to Los Angeles by month**
 
 ```{r}
+flights_clean %>%
+filter(dest == "LAX") %>%
+group_by(month) %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
 
 ```
 
@@ -299,6 +351,10 @@ improved_50
 #### **3.2.8 Compute the average delay in every month for flights to Los Angeles. But include only those flights that are delayed by at least 10 minutes.**
 
 ```{r}
+flights_clean %>%
+filter(dest == "LAX", dep_delay >= 10) %>%
+group_by(month) %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE))
 
 ```
 
@@ -307,6 +363,8 @@ improved_50
 #### **3.2.9 Consider a vector of flight delays: d <- c(11, 3, 5, 15, 12, 7, 9, 19) Compute the percentage of flights, based on this vector, that are delayed by more than 10 minutes. Use mean(), not loops or sums!**
 
 ```{r}
+d <- c(11, 3, 5, 15, 12, 7, 9, 19)
+mean(d > 10)
 
 ```
 
@@ -315,7 +373,11 @@ improved_50
 #### **3.2.10 For each airline (carrier), compute the percentage of flights to Los Angeles that are delayed by more than 10 minutes.**
 
 ```{r}
-
+flights_clean %>%
+filter(dest == "LAX") %>%
+group_by(carrier) %>%
+summarise(pct_delayed_10 = mean(dep_delay > 10) * 100) %>%
+arrange(desc(pct_delayed_10))
 ```
 
 ---
@@ -323,6 +385,14 @@ improved_50
 #### **3.2.11 During which hours of day do we see the shortest average delay, and the longest average delay? Only print two longest/shortest delays, ordered by delay length.**
 
 ```{r}
+by_hour_lax15 <- flights_clean %>%
+  filter(dest == "LAX", dep_delay > 15) %>%
+  group_by(hour) %>%
+  summarise(avg_delay = mean(dep_delay)) %>%
+  arrange(avg_delay)
+
+head(by_hour_lax15, 2)   
+tail(by_hour_lax15, 2)  
 
 ```
 
@@ -331,6 +401,14 @@ improved_50
 #### **3.2.12 Compute the percentage of flights delayed to LA by at least 10 minutes for each airline and each month. Which three airline-months combinations are the worst ones?**
 
 ```{r}
+worst_three <- flights_clean %>%
+filter(dest == "LAX") %>%
+group_by(carrier, month) %>%
+summarise(pct_delayed_10 = mean(dep_delay >= 10) * 100, .groups = "drop") %>%
+arrange(desc(pct_delayed_10)) %>%
+slice(1:3)
+
+worst_three
 
 ```
 
@@ -339,7 +417,7 @@ improved_50
 #### **3.2.13 How many different airlines flew to Las Vegas?**
 
 ```{r}
-
+n_distinct(flights_clean$carrier[flights_clean$dest == "LAS"])
 ```
 
 ---
@@ -351,16 +429,18 @@ improved_50
 
 #### **In Question 3.2.2 you were asked to remove all rows with missing departure delay values. What do you think, do you need to re-load the data to include those rows again? Explain**
 
-```{r}
-
-```
+No need to reload unless you actually need the removed rows again.
+We can still analyze Las Vegas flights using flights_clean.
 
 ---
 
 #### **3.3.2 Now let’s look at flights to Las Vegas (airport code “LAS”). How many flights were there to Las Vegas?**
 
 ```{r}
+flights_to_LAS <- flights_clean %>%
+filter(dest == "LAS")
 
+nrow(flights_to_LAS)
 ```
 
 ---
@@ -368,23 +448,38 @@ improved_50
 #### **3.3.3 Which was the fastest flight to Las Vegas (shortest airtime)? Print the date, departure time, air time, carrier and the original airport.**
 
 ```{r}
-
+flights_to_LAS %>%
+arrange(air_time) %>%
+select(year, month, day, dep_time, air_time, carrier, origin) %>%
+head(1)
 ```
 
 ---
 
 #### **3.3.4 Look up flight time from NYC to LAS (on Expedia or a similar website). What are the typical flight times for direct flights? Does the fastest time you computed look realistic?**
 
-```{r}
-
-```
+The fastest flight was a United Airlines flight from Newark (EWR) that took 256 minutes.
+Typical flight times from NYC to Las Vegas are around 5–6 hours (300–360 minutes).
+Since 256 minutes is slightly shorter than average but still within a realistic range, this result seems reasonable.
 
 ---
 
 #### **3.3.5 Compute the flight speed (using air time and distance), in mph (not in miles per minute!) for all flights to Las Vegas. How fast where the three fastest and the three slowest flights? Print the date and time, carrier, departure delay, and speed (no other variables). Print them in the order of increasing speed.**
 
 ```{r}
-  
+flights_to_LAS <- flights_to_LAS %>%
+mutate(speed_mph = distance / (air_time / 60))
+
+flights_to_LAS %>%
+arrange(speed_mph) %>%
+select(year, month, day, dep_time, carrier, speed_mph) %>%
+head(3)
+
+flights_to_LAS %>%
+arrange(desc(speed_mph)) %>%
+select(year, month, day, dep_time, carrier, speed_mph) %>%
+head(3)
+
 ```
 
 ---
@@ -392,7 +487,13 @@ improved_50
 #### **3.3.6 There may be many flights per day to Las Vegas from NYC. What is the maximum number of daily flights? What is the minimum number?**
 
 ```{r}
-
+flights_to_LAS %>%
+group_by(year, month, day) %>%
+summarise(daily_flights = n()) %>%
+summarise(
+max_daily = max(daily_flights),
+min_daily = min(daily_flights)
+)
 ```
 
 ---
@@ -400,14 +501,20 @@ improved_50
 #### **3.3.7 f you did the previous question correctly, you see that one of the carriers is American Airlines (AA).**
 
 ```{r}
+avg_delay_by_carrier <- flights_clean %>%
+group_by(carrier) %>%
+summarise(avg_delay = mean(dep_delay, na.rm = TRUE)) %>%
+arrange(desc(avg_delay)) %>%
+mutate(rank = rank(-avg_delay, ties.method = "first"))
 
+avg_delay_by_carrier
 ```
 
 ---
 
 
 
-#### **It took me around 7-8 Hours to complete the PS haha **
+#### **It took me around 8-9 Hours to complete the PS**
 
 
 
