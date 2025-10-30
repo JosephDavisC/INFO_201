@@ -105,20 +105,31 @@ data %>%
 #### **1.2.2 What is the average growth in LE between these two years? Let’s do it by computing the average of the country-specific growth column you made in 1.**
 
 ```{r}
-
+avg_growth <- mean(data$growth, na.rm = TRUE)
+avg_growth
 ```
 ---
 
 #### **1.2.3 Which country showed largest LE growth and which country grew least?**
 
 ```{r}
+most_growth <- data %>% filter(growth == max(growth, na.rm = TRUE))
 
+least_growth <- data %>% filter(growth == min(growth, na.rm = TRUE))
+
+most_growth
+
+```
+```{r}
+least_growth
 ```
 
 ---
 
 #### **1.2.4 How many countries were there where LE improved by more than 50 percent?**
 ```{r}
+improved_50 <- sum(data$growth > 50, na.rm = TRUE)
+improved_50
 
 ```
 
