@@ -42,20 +42,45 @@ head(data, 5)
 ---
 
 #### **1.1.5 what does a row in this dataset represent?**
-```{r}
+Each row shows one country and its region, along with that country’s life expectancy, GDP per capita, and population in 1960 and 2019. It basically summarizes how each country changed over time.
 
-```
 ---
 
 #### **1.1.6 write a loop over all variables that prints the column name, and a number of missing values in that column.**
 ```{r}
-
+for (nm in names(data)) {
+  x <- data[[nm]]
+  cat(
+    nm,
+    " | class:", class(x)[1],
+    " | N/As:", sum(is.na(x)),
+    "\n"
+  )
+}
 ```
 ---
 
 #### **1.1.7 Extend your loop so that it also prints out the average value–but only for numeric columns**
 ```{r}
-
+for (nm in names(data)) {
+  x <- data[[nm]]
+  if (is.numeric(x)) {
+    cat(
+      nm,
+      " | class:", class(x)[1],
+      " | N/As:", sum(is.na(x)),
+      " | mean:", mean(x, na.rm = TRUE),
+      "\n"
+    )
+  } else {
+    cat(
+      nm,
+      " | class:", class(x)[1],
+      " | N/As:", sum(is.na(x)),
+      " | mean: (non-numeric)\n"
+    )
+  }
+}
 ```
 
 ---
@@ -65,7 +90,14 @@ head(data, 5)
 #### **1.2.1 Create a new column in the dataset–the relative growth (in percent) of life expectancy between 1960 and 2019. Call it “growth”.**
 
 ```{r}
+library(dplyr)
 
+data <- data %>%
+  mutate(growth = 100 * (le2019 - le1960) / le1960)
+
+data %>%
+  select(name, region, le1960, le2019, growth) %>%
+  head(5)
 ```
 
 ---
