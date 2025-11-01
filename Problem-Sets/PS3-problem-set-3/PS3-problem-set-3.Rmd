@@ -39,6 +39,9 @@ names(data)
 ```{r}
 head(data, 5)
 ```
+The dataset looks good. It shows country names, regions, life expectancy, GDP, and population values.
+Some columns like GDP have missing values (NA), but overall the data looks clean and readable.
+
 ---
 
 #### **1.1.5 what does a row in this dataset represent?**
@@ -58,6 +61,9 @@ for (nm in names(data)) {
   )
 }
 ```
+Columns like `name`, `region`, and the population columns (only 1 NA total) look good.
+But `GDP_PC1960`, `GDP_PC2019`, and `le1960` have quite a few missing values, so they might need cleaning.
+
 ---
 
 #### **1.1.7 Extend your loop so that it also prints out the average value–but only for numeric columns**
@@ -222,13 +228,14 @@ x <- data$le1960
 y <- data$growth
 
 plot(x, y,
-main = "Life expectancy (1960) vs. % change to 2019 — by country",
-xlab = "Life expectancy in 1960 (years)",
-ylab = "Change in life expectancy 1960→2019 (%)",
-pch = 16, 
-cex = 0.8, 
-col = "blue")
-abline(h = 0, lty = 2) 
+     main = "Life Expectancy (1960) vs % Growth to 2019 — by Country",
+     xlab = "Life Expectancy in 1960 (years)",
+     ylab = "LE Growth from 1960 to 2019 (%)",
+     pch = 19,       
+     cex = 0.9,      
+     col = "dodgerblue")
+abline(h = 0, lty = 2, col = "gray50")
+
 ```
 
 ---
@@ -388,11 +395,11 @@ arrange(desc(pct_delayed_10))
 by_hour_lax15 <- flights_clean %>%
   filter(dest == "LAX", dep_delay > 15) %>%
   group_by(hour) %>%
-  summarise(avg_delay = mean(dep_delay)) %>%
+  summarise(avg_delay = mean(dep_delay, na.rm = TRUE), .groups = "drop") %>%
   arrange(avg_delay)
 
-head(by_hour_lax15, 2)   
-tail(by_hour_lax15, 2)  
+head(by_hour_lax15, 2)
+tail(by_hour_lax15, 2)
 
 ```
 
@@ -468,17 +475,19 @@ Since 256 minutes is slightly shorter than average but still within a realistic 
 
 ```{r}
 flights_to_LAS <- flights_to_LAS %>%
-mutate(speed_mph = distance / (air_time / 60))
+  mutate(speed_mph = distance / (air_time / 60))
 
+# three slowest (increasing speed)
 flights_to_LAS %>%
-arrange(speed_mph) %>%
-select(year, month, day, dep_time, carrier, speed_mph) %>%
-head(3)
+  arrange(speed_mph) %>%
+  select(year, month, day, dep_time, carrier, dep_delay, speed_mph) %>%
+  head(3)
 
+# three fastest
 flights_to_LAS %>%
-arrange(desc(speed_mph)) %>%
-select(year, month, day, dep_time, carrier, speed_mph) %>%
-head(3)
+  arrange(desc(speed_mph)) %>%
+  select(year, month, day, dep_time, carrier, dep_delay, speed_mph) %>%
+  head(3)
 
 ```
 
@@ -488,17 +497,15 @@ head(3)
 
 ```{r}
 flights_to_LAS %>%
-group_by(year, month, day) %>%
-summarise(daily_flights = n()) %>%
-summarise(
-max_daily = max(daily_flights),
-min_daily = min(daily_flights)
-)
+  group_by(year, month, day) %>%
+  summarise(daily_flights = n(), .groups = "drop") %>%
+  summarise(max_daily = max(daily_flights),
+            min_daily = min(daily_flights))
 ```
 
 ---
 
-#### **3.3.7 f you did the previous question correctly, you see that one of the carriers is American Airlines (AA).**
+#### **3.3.7 If you did the previous question correctly, you see that one of the carriers is American Airlines (AA).**
 
 ```{r}
 avg_delay_by_carrier <- flights_clean %>%
@@ -510,11 +517,16 @@ mutate(rank = rank(-avg_delay, ties.method = "first"))
 avg_delay_by_carrier
 ```
 
+```{r}
+aa_position <- avg_delay_by_carrier %>% filter(carrier == "AA")
+aa_position
+```
+
 ---
 
 
 
-#### **It took me around 8-9 Hours to complete the PS**
+#### **It took me around 8-9 Hours to complete the PS3 hehe**
 
 
 
