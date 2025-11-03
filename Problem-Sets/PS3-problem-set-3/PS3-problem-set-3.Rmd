@@ -25,6 +25,7 @@ data
 #### **1.1.2 How many rows and columns does it contain?**
 ```{r}
 nrow(data)
+ncol(data)
 ```
 ---
 
@@ -374,6 +375,7 @@ d <- c(11, 3, 5, 15, 12, 7, 9, 19)
 mean(d > 10)
 
 ```
+50% of flights are delayed by more than 10 minutes
 
 ---
 
