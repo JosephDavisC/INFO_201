@@ -357,3 +357,30 @@ rank_US <- data_clean %>%
 
 rank_US
 ```
+---
+
+## **4 Access to electricity**
+
+---
+
+#### **4.1 Compute average access to electricity (accessElectricity) across all continents by each year. Display it as a adequately labeled good plot.**
+```{r}
+
+```
+
+---
+
+#### **4.2 If you did it correctly, you notice that electricty access is decreasing on most continents! What the heck is going on?**
+
+---
+
+## **5 Extra Credits**
+
+---
+
+#### **5.1 Remove all missing child mortality and life expectancy values. How many rows are left?**
+
+---
+
+#### **Pick 3-5 countries and make a trajectory plot of life expectancy versus child mortality. Choose such countries where you see not just smooth improvements, but also periods of deterioration through these years **
+
