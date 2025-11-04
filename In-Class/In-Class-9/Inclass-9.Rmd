@@ -1,0 +1,74 @@
+---
+title: "Inclass-9"
+author: "Joseph Davis Chamdani"
+date: "2025-11-03"
+output: html_document
+---
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+```{r}
+diamonds <- read_delim("diamonds.csv")
+diamonds
+```
+```{r}
+diamonds %>%
+  pull(price) %>%
+  mean()
+```
+```{r}
+diamonds %>%
+  group_by(cut) %>%
+  pull(price)%>%
+  mean()
+```
+
+```{r}
+diamonds %>%
+  sample_n(1000) %>%
+  ggplot(aes(carat,price)) +
+  geom_point()
+```
+```{r}
+diamonds %>%
+  sample_n(1000) %>%
+  ggplot(aes(x=carat, y=price)) +
+  geom_point(col ="skyblue")
+  
+```
+
+```{r}
+orange <- read_delim("orange-trees.csv")
+orange
+```
+```{r}
+orange %>% 
+  filter(tree == 1) %>% 
+  ggplot(aes(age, circumference)) +
+  geom_line()
+```
+```{r}
+orange %>%
+  group_by(tree) %>%
+  arrange(tree, age) %>% 
+  slice(1) %>%
+  ggplot(aes(tree, circumference)) +
+  geom_col()
+```
+```{r}
+orange %>%
+  group_by(tree) %>%
+  arrange(tree, age) %>% 
+  slice(1) %>%
+  ggplot(aes(tree, circumference)) +
+  geom_col(fill = "purple2", col = "goldenrod")
+```
+
+```{r}
+diamonds %>% 
+  ggplot(aes(price)) +
+  geom_histogram(bins = 60)
+```
+
