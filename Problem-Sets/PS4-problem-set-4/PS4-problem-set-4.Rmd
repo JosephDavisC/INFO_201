@@ -269,7 +269,9 @@ data_life %>%
     col = "Continent"
   )
 ```
+
 Countries with lower life expectancy in 1960 had more kids. Africa had low life expectancy and high fertility, while Europe had high life expectancy and low fertility. Bigger dots are countries with more people.
+
 ---
 
 #### **3.2.3 Make a similar plot, but this time use 2019 data only.**
