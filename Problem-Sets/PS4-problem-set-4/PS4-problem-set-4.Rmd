@@ -24,7 +24,7 @@ ncol(data)
 
 ### **1.2 Print a small sample of data. Does it look OK?**
 ```{r}
-head(data, 10)
+data %>% head(10)
 ```
 
 --- 
@@ -38,8 +38,8 @@ Each row represents one country in a specific year, showing its demographic and 
 ### **1.4 Show how the country names are written (print appropriate rows/columns) and ensure the output is easily readable**
 ```{r}
 data %>%
-  filter(grepl("Korea|Venezuela|United", name, ignore.case = TRUE)) %>%
-  select(iso3, iso2, name, region, `sub-region`, `intermediate-region`) %>%
+  filter(grepl("Korea|Venezuela|Kingdom", name)) %>%
+  select(name, iso3, iso2) %>%
   distinct() %>%
   arrange(name)
 ```
@@ -51,8 +51,7 @@ data %>%
 data %>%
   filter(time == 2000, !is.na(region)) %>%
   group_by(region) %>%
-  summarise(num_countries = n_distinct(name)) %>%
-  arrange(desc(num_countries))
+  summarize(n_countries = n_distinct(name))
 ```
 
 --- 
@@ -60,10 +59,10 @@ data %>%
 ### **1.6 How many countries are there across years? (unique by iso3, iso2, and name)**
 ```{r}
 data %>%
-  summarise(
-    unique_name = n_distinct(name),
-    unique_iso2 = n_distinct(iso2),
-    unique_iso3 = n_distinct(iso3)
+  summarize(
+    n_names = n_distinct(name),
+    n_iso2 = n_distinct(iso2, na.rm = TRUE),
+    n_iso3 = n_distinct(iso3, na.rm = TRUE)
   )
 ```
 
@@ -73,7 +72,7 @@ data %>%
 ```{r}
 data %>%
   filter(is.na(iso2)) %>%
-  select(name, iso3, region) %>%
+  select(name, iso2, iso3) %>%
   distinct()
 ```
 Only Namibia doesn’t have an iso2 code.
@@ -84,7 +83,9 @@ Only Namibia doesn’t have an iso2 code.
 ```{r}
 data %>%
   filter(name == "Namibia") %>%
-  select(name, iso3, iso2)
+  select(name, time, iso2, iso3) %>%
+  arrange(time) %>%
+  head(15)
 ```
 Namibia’s ISO-3 code is “NAM”, but its iso2 code is missing, I think it's likely a data issue or it wasn’t assigned properly in this dataset.
 
@@ -97,7 +98,7 @@ Namibia’s ISO-3 code is “NAM”, but its iso2 code is missing, I think it's 
 ### **2.1 Keep only rows with valid CO2 per capita values. How many lines are left?**
 ```{r}
 data_co2 <- data %>%
-  filter(!is.na(co2))
+  filter(!is.na(co2_PC))
 nrow(data_co2)
 ```
 
@@ -107,46 +108,48 @@ nrow(data_co2)
 ```{r}
 library(ggplot2)
 
+countries_plot <- c("United States of America", "China", "India", "Germany", "Indonesia", "Japan")
+
 data_co2 %>%
-  filter(name %in% c("United States of America", "China", "India", "Brazil", "Germany")) %>%
-  ggplot(aes(x = time, y = co2, color = name)) +
+  filter(name %in% countries_plot, !is.na(co2)) %>%
+  ggplot(aes(x = time, y = co2, col = name)) +
   geom_line() +
   labs(
     title = "Total CO2 Emissions Over Time",
     x = "Year",
-    y = "Total CO2 Emissions (million tons)",
-    color = "Country"
+    y = "Total CO2 Emissions (kt)",
+    col = "Country"
   )
 ```
 
 a) I used a line plot because it clearly shows how emissions change over time for each country.
-b) The plot shows that China’s emissions increased the most after 2000, while the U.S. stayed high but flat, and India keeps rising steadily.
+b) China's CO2 emissions exploded since the 1980s, far surpassing all other countries. The US, Germany, Japan, India, and Indonesia remained relatively stable in comparison, showing a major shift in global emissions from Western nations to rapidly industrializing Asian economies.".
 
 ---
 
 ### **2.3 Make a similar plot for the same countries, but using CO2 per capita. What does this suggest?**
 ```{r}
 data_co2 %>%
-  filter(name %in% c("United States of America", "China", "India", "Brazil", "Germany")) %>%
-  ggplot(aes(x = time, y = co2_PC, color = name)) +
+  filter(name %in% countries_plot, !is.na(co2_PC)) %>%
+  ggplot(aes(x = time, y = co2_PC, col = name)) +
   geom_line() +
   labs(
     title = "CO2 Emissions Per Capita Over Time",
     x = "Year",
-    y = "CO2 Emissions Per Capita (tons per person)",
-    color = "Country"
+    y = "CO2 Per Capita (metric tons per person)",
+    col = "Country"
   )
 ```
-
+Per capita emissions reveal a different story: the US emits far more per person 15-20 metric tons) than China (7 metric tons), despite China's higher total. This shows China's massive total is due to its large population, while Americans have much bigger individual carbon footprints. India and Indonesia remain very low at 1-2 metric tons per person
 ---
 
 ### **2.4 Compute average CO2 per capita by continent in 1960 and 2016. Comment on the result.**
 ```{r}
 data_co2 %>%
-  filter(time %in% c(1960, 2016), !is.na(region)) %>%
+  filter(time %in% c(1960, 2016), !is.na(co2_PC), !is.na(region)) %>%
   group_by(region, time) %>%
-  summarise(avg_co2 = mean(co2_PC, na.rm = TRUE)) %>%
-  arrange(time, desc(avg_co2))
+  summarize(avg_co2_PC = round(mean(co2_PC, na.rm = TRUE), 2)) %>%
+  arrange(region, time)
 ```
 
 ---
@@ -154,19 +157,16 @@ data_co2 %>%
 ### **2.5 Make a barplot of average CO2 per capita across continents (1960 vs 2016).**
 ```{r}
 data_co2 %>%
-  filter(time %in% c(1960, 2016), !is.na(region)) %>%
+  filter(time %in% c(1960, 2016), !is.na(co2_PC), !is.na(region)) %>%
   group_by(region, time) %>%
-  summarise(avg_co2 = mean(co2_PC, na.rm = TRUE)) %>%
-  ggplot(aes(x = region, y = avg_co2, fill = factor(time))) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8), color = "black") +
-  scale_fill_manual(
-    values = c("1960" = "#404076", "2016" = "#D8C999"),
-    name = "Year"
-  ) +
+  summarize(avg_co2_PC = mean(co2_PC, na.rm = TRUE)) %>%
+  ggplot(aes(x = region, y = avg_co2_PC, fill = factor(time))) +
+  geom_col(position = "dodge") +
   labs(
     title = "Average CO2 Emissions Per Capita by Continent (1960 vs 2016)",
     x = "Continent",
-    y = "Average CO2 per Capita"
+    y = "Average CO2 Per Capita (metric tons per person)",
+    fill = "Year"
   )
 ```
 
@@ -186,9 +186,8 @@ Yes, a bar plot works well here because it clearly compares the average CO2 emis
 ```{r}
 orange <- read_delim("orange-trees.csv")
 
-nrow(orange)
-ncol(orange)
 head(orange)
+glimpse(orange)
 ```
 
 #### **3.1.2 Compute growth of Tree #1**
@@ -218,24 +217,26 @@ Growth at age 484 is calculated as 58 - 30 = 28, the difference between the circ
 
 #### **3.1.3 Compute growth for each tree**
 ```{r}
-orange_growth <- orange %>%
+orange <- orange %>%
   group_by(tree) %>%
   mutate(growth = circumference - lag(circumference))
 
-head(orange_growth)
+orange
 ```
 ---
 
 #### **3.1.4 Plot growth vs age for all trees, marking trees differently (color/line/point).**
 ```{r}
-ggplot(orange_growth, aes(x = age, y = growth, color = factor(tree))) +
+orange %>%
+  filter(!is.na(growth)) %>%
+  ggplot(aes(x = age, y = growth, col = factor(tree))) +
   geom_line() +
   geom_point() +
   labs(
-    title = "Growth vs Age for Each Orange Tree",
+    title = "Tree Growth Over Time",
     x = "Age (days)",
-    y = "Growth in Circumference",
-    color = "Tree"
+    y = "Growth in Circumference (mm)",
+    col = "Tree"
   )
 ```
 
@@ -245,82 +246,76 @@ ggplot(orange_growth, aes(x = age, y = growth, color = factor(tree))) +
 
 #### **3.2.1 Remove rows with missing region, LE, and total fertility. How many lines remain?**
 ```{r}
-data_clean <- data %>%
+data_life <- data %>%
   filter(!is.na(region), !is.na(lifeExpectancy), !is.na(fertilityRate))
-nrow(data_clean)
+
+nrow(data_life)
 ```
 
 ---
 
 #### **3.2.2 Scatterplot (1960): total fertility vs life expectancy by country; size by country size, color by region. Comment.**
 ```{r}
-data_1960 <- data_clean %>%
-  filter(time == 1960)
-
-ggplot(data_1960, aes(x = fertilityRate, y = lifeExpectancy, 
-                      color = region, size = totalPopulation)) +
+data_life %>%
+  filter(time == 1960) %>%
+  ggplot(aes(x = lifeExpectancy, y = fertilityRate, 
+             size = totalPopulation, col = region)) +
   geom_point(alpha = 0.7) +
   labs(
-    title = "Fertility vs Life Expectancy (1960)",
-    x = "Total Fertility Rate (births per woman)",
-    y = "Life Expectancy (years)",
-    color = "Region",
-    size = "Population"
-  ) +
-  theme_minimal()
+    title = "Total Fertility vs Life Expectancy (1960)",
+    x = "Life Expectancy (years)",
+    y = "Total Fertility Rate (births per woman)",
+    size = "Population",
+    col = "Continent"
+  )
 ```
-
+Countries with lower life expectancy in 1960 had more kids. Africa had low life expectancy and high fertility, while Europe had high life expectancy and low fertility. Bigger dots are countries with more people.
 ---
 
-#### **3.2.3 Scatterplot (2019): same as 3.2.2 but for 2019. Comment.**
+#### **3.2.3 Make a similar plot, but this time use 2019 data only.**
 ```{r}
-data_2019 <- data_clean %>%
-  filter(time == 2019)
-
-ggplot(data_2019, aes(x = fertilityRate, y = lifeExpectancy,
-                      color = region, size = totalPopulation)) +
+data_life %>%
+  filter(time == 2019) %>%
+  ggplot(aes(x = lifeExpectancy, y = fertilityRate, 
+             size = totalPopulation, col = region)) +
   geom_point(alpha = 0.7) +
   labs(
-    title = "Fertility vs Life Expectancy (2019)",
-    x = "Total Fertility Rate (births per woman)",
-    y = "Life Expectancy (years)",
-    color = "Region",
-    size = "Population"
-  ) +
-  theme_minimal()
+    title = "Total Fertility vs Life Expectancy (2019)",
+    x = "Life Expectancy (years)",
+    y = "Total Fertility Rate (births per woman)",
+    size = "Population",
+    col = "Continent"
+  )
 ```
 
 ---
 
 #### **3.2.4 Compare 1960 vs 2019 plots. What changed over ~60 years?**
-In 1960, most countries had high fertility and low life expectancy, with clear regional separation.
-By 2019, fertility rates dropped everywhere, and life expectancy increased globally.
-Many countries that were once low-performing (especially in Asia and Africa) moved closer to developed nations.
-Overall, the points shifted upward and left, showing progress in health and reduced birth rates.
+
+Most countries moved from low life expectancy and high fertility in 1960 to high life expectancy and low fertility in 2019. African and Asian countries improved the most. Overall, people live longer and have fewer kids now.
+
 ---
 
 #### **3.2.5 Compute average life expectancy for each continent in 1960 and 2019. Do results fit the figures?**
 ```{r}
-data_clean %>%
-  filter(time %in% c(1960, 2019), !is.na(region)) %>%
+data_life %>%
+  filter(time %in% c(1960, 2019)) %>%
   group_by(region, time) %>%
-  summarise(avg_LE = mean(lifeExpectancy, na.rm = TRUE)) %>%
-  arrange(time, desc(avg_LE))
+  summarize(avg_life_exp = round(mean(lifeExpectancy, na.rm = TRUE), 1)) %>%
+  arrange(region, time)
 ```
 
 ---
 
 #### **3.2.6 Compute average LE growth 1960–2019 by continent. Order by growth and explain.**
 ```{r}
-le_growth <- data_clean %>%
+data_life %>%
+  filter(time %in% c(1960, 2019)) %>%
   group_by(region, time) %>%
-  summarise(avg_LE = mean(lifeExpectancy, na.rm = TRUE)) %>%
-  arrange(region, time) %>%
-  mutate(growth = avg_LE - lag(avg_LE)) %>%
-  filter(!is.na(growth)) %>%
+  summarize(avg_life_exp = mean(lifeExpectancy, na.rm = TRUE)) %>%
+  group_by(region) %>%
+  summarize(growth = round(avg_life_exp[time == 2019] - avg_life_exp[time == 1960], 1)) %>%
   arrange(desc(growth))
-
-le_growth
 ```
 
 ---
@@ -328,34 +323,33 @@ le_growth
 #### **3.2.7 Show trajectories on fertility–LE space for US, Sweden, China, and a few others.**
 ```{r}
 
-countries <- c("United States of America", "Sweden", "China", "India", "Brazil")
+countries_trajectory <- c("United States of America", "Sweden", "China", 
+                          "Brazil", "India", "Indonesia", "Japan")
 
-data_clean %>%
-  filter(name %in% countries) %>%
-  ggplot(aes(x = fertilityRate, y = lifeExpectancy, color = name)) +
-  geom_path(size = 1) +
-  geom_point(size = 2, alpha = 0.6) +
+data_life %>%
+  filter(name %in% countries_trajectory) %>%
+  ggplot(aes(x = fertilityRate, y = lifeExpectancy, col = name)) +
+  geom_path(arrow = arrow(type = "closed", length = unit(0.15, "inches")), 
+            size = 1) +
+  geom_point(data = . %>% filter(time == 1960), size = 3) +  
   labs(
-    title = "Fertility vs Life Expectancy Trajectories (1960–2019)",
+    title = "Country Trajectories: Fertility vs Life Expectancy (1960-2019)",
     x = "Total Fertility Rate (births per woman)",
-    y = "Life Expectancy at Birth (years)",
-    color = "Country"
-  ) +
-  theme_minimal()
+    y = "Life Expectancy (years)",
+    col = "Country"
+  )
 ```
 
 ---
 
 #### **3.2.8 What was the US ranking in life expectancy in 1960 and in 2019 (from top)?**
 ```{r}
-rank_US <- data_clean %>%
+data_life %>%
   filter(time %in% c(1960, 2019), !is.na(lifeExpectancy)) %>%
   group_by(time) %>%
-  mutate(rank = rank(-lifeExpectancy, ties.method = "first")) %>%
+  mutate(rank = rank(desc(lifeExpectancy))) %>% 
   filter(name == "United States of America") %>%
-  select(time, lifeExpectancy, rank)
-
-rank_US
+  select(name, time, lifeExpectancy, rank)
 ```
 ---
 
@@ -365,12 +359,35 @@ rank_US
 
 #### **4.1 Compute average access to electricity (accessElectricity) across all continents by each year. Display it as a adequately labeled good plot.**
 ```{r}
-
+data %>%
+  filter(!is.na(region), !is.na(accessElectricity)) %>%
+  group_by(region, time) %>%
+  summarize(avg_electricity = mean(accessElectricity, na.rm = TRUE)) %>%
+  ggplot(aes(x = time, y = avg_electricity, col = region)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Average Access to Electricity by Continent Over Time",
+    x = "Year",
+    y = "Access to Electricity (% of population)",
+    col = "Continent"
+  )
 ```
 
 ---
 
 #### **4.2 If you did it correctly, you notice that electricty access is decreasing on most continents! What the heck is going on?**
+
+```{r}
+data %>%
+  filter(region == "Oceania", !is.na(accessElectricity)) %>%
+  group_by(time) %>%
+  summarise(n_countries = n_distinct(name),
+            avg_access = mean(accessElectricity, na.rm = TRUE),
+            .groups = "drop")
+```
+
+The decrease is a data artifact, not real. Early years only had developed countries (Australia, New Zealand) with 100% access. As the table shows, the number of countries increased from 6 in 1990 to 13 in 1999. These new additions were Pacific island nations with lower access, pulling the average down. The dataset expanded, not electricity access decreased.
 
 ---
 
@@ -380,7 +397,138 @@ rank_US
 
 #### **5.1 Remove all missing child mortality and life expectancy values. How many rows are left?**
 
+```{r}
+data_mortality <- data %>%
+  filter(!is.na(childMortality), !is.na(lifeExpectancy))
+
+nrow(data_mortality)
+```
+
+
 ---
 
-#### **Pick 3-5 countries and make a trajectory plot of life expectancy versus child mortality. Choose such countries where you see not just smooth improvements, but also periods of deterioration through these years **
+#### **5.2 Pick 3-5 countries and make a trajectory plot of life expectancy versus child mortality. Choose such countries where you see not just smooth improvements, but also periods of deterioration through these years **
 
+```{r}
+countries_ec <- c("Rwanda", "Cambodia", "Afghanistan", 
+                  "China", "South Korea")
+
+data_mortality %>%
+  filter(name %in% countries_ec) %>%
+  ggplot(aes(x = childMortality, y = lifeExpectancy, col = name)) +
+  geom_path(arrow = arrow(type = "closed", length = unit(0.1, "inches")), 
+            size = 1, alpha = 0.7) +
+  geom_point(data = . %>% filter(time %in% c(1994, 1975, 1979, 1960, 1950)), 
+             size = 4, shape = 21, fill = "white", stroke = 2) +
+  labs(
+    title = "Child Mortality vs Life Expectancy: Historical Disruptions",
+    x = "Child Mortality (deaths per 1,000 live births)",
+    y = "Life Expectancy (years)",
+    col = "Country"
+  )
+```
+
+
+---
+
+
+#### **5.3 Mark individual years related to the deterioration on this graph with symbols.**
+
+```{r}
+historical_events <- data_mortality %>%
+  filter(
+    (name == "Rwanda" & time == 1994) |
+    (name == "Cambodia" & time %in% c(1975, 1979)) |
+    (name == "Afghanistan" & time %in% c(1979, 2001)) |
+    (name == "China" & time == 1960)
+  )
+
+data_mortality %>%
+  filter(name %in% countries_ec) %>%
+  ggplot(aes(x = childMortality, y = lifeExpectancy, col = name)) +
+  geom_path(arrow = arrow(type = "closed", length = unit(0.1, "inches")), 
+            size = 1, alpha = 0.7) +
+  geom_point(data = historical_events, size = 5, shape = 4, stroke = 2) +
+  geom_text(data = historical_events, 
+            aes(label = time), 
+            nudge_y = 2, size = 3, fontface = "bold") +
+  labs(
+    title = "Child Mortality vs Life Expectancy: Historical Disruptions",
+    x = "Child Mortality (deaths per 1,000 live births)",
+    y = "Life Expectancy (years)",
+    col = "Country"
+  )
+```
+
+
+---
+
+#### **5.4 Mark each decade with a number.**
+
+```{r}
+decade_points <- data_mortality %>%
+  filter(name %in% countries_ec, time %% 10 == 0)
+
+data_mortality %>%
+  filter(name %in% countries_ec) %>%
+  ggplot(aes(x = childMortality, y = lifeExpectancy, col = name)) +
+  geom_path(arrow = arrow(type = "closed", length = unit(0.1, "inches")), 
+            size = 1, alpha = 0.7) +
+  geom_point(data = decade_points, size = 3) +
+  geom_text(data = decade_points, 
+            aes(label = time), 
+            size = 2.5, nudge_y = 1.5, fontface = "bold") +
+  labs(
+    title = "Child Mortality vs Life Expectancy: Historical Disruptions",
+    x = "Child Mortality (deaths per 1,000 live births)",
+    y = "Life Expectancy (years)",
+    col = "Country"
+  )
+```
+
+
+---
+
+#### **5.5 For each country, label the worst deterioration year prominently on the figure.**
+
+```{r}
+worst_years <- data_mortality %>%
+  filter(name %in% countries_ec) %>%
+  group_by(name) %>%
+  arrange(name, time) %>%
+  mutate(le_change = lifeExpectancy - lag(lifeExpectancy)) %>%
+  filter(!is.na(le_change)) %>%
+  slice_min(le_change, n = 1)
+
+data_mortality %>%
+  filter(name %in% countries_ec) %>%
+  ggplot(aes(x = childMortality, y = lifeExpectancy, col = name)) +
+  geom_path(arrow = arrow(type = "closed", length = unit(0.1, "inches")), 
+            size = 1, alpha = 0.6) +
+  geom_point(data = decade_points, size = 2, alpha = 0.5) +  
+  geom_text(data = decade_points, 
+            aes(label = time), 
+            size = 2, alpha = 0.6) +
+  geom_point(data = worst_years, size = 6, shape = 4, stroke = 2) + 
+  geom_text(data = worst_years, 
+            aes(label = time), 
+            size = 3.5, fontface = "bold", nudge_y = 3) +
+  labs(
+    title = "Child Mortality vs Life Expectancy: Decades and Crisis Years",
+    x = "Child Mortality (deaths per 1,000 live births)",
+    y = "Life Expectancy (years)",
+    col = "Country"
+  )
+```
+
+---
+
+
+
+
+
+#### *It took me around 8-10 Hours to complete the PS4*
+
+
+
+![](jo-sticker.PNG){width=19%}
