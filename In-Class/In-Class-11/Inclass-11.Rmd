@@ -1,0 +1,72 @@
+---
+title: "Inclass-11"
+author: "Joseph Davis Chamdani"
+date: "2025-11-10"
+output: html_document
+---
+
+```{r}
+ students <- data.frame(
+     student = c("Cecilia", "Marco", "Guangqi"),
+     "GPA 2023-au" = c(4.0, 3.8, 2.8),
+     check.names = FALSE)
+  students
+
+```
+```{r}
+ cbind(students,
+      "GPA 2024-wi" = c(3.9, 3.7, 3.0))
+```
+
+```{r}
+  rbind(students,
+      data.frame(student = "Nong", "GPA 2023-au" = 3.6,
+                 check.names = FALSE))
+```
+```{r}
+  rbind(NULL,
+       data.frame(student = "Nong", "GPA 2023-au" = 3.6,
+                 check.names = FALSE))
+```
+
+```{r}
+      students <- data.frame(
+         name = c("Cecilia",
+                  "Marco",
+                  "Guangqi"),
+         "GPA 2023-au" = c(4.0,
+                           3.8,
+                           2.8),
+         check.names = FALSE)
+      students
+
+```
+
+```{r}
+   students24 <- data.frame(
+         name = c("Marco",
+                  "Cecilia",
+                  "Guangqi"),
+         "gpa 2024-wi" = c(3.7,
+                           3.9,
+                           3.0),
+         check.names = FALSE)
+      students24
+
+```
+
+
+```{r}
+cbind(students, students24)
+```
+
+```{r}
+library(tidyverse)
+cbind(students, students24) %>% 
+  select(!name)
+```
+
+```{r}
+merge(students, students24, by.x = "student", by.y = "name")
+```
+
