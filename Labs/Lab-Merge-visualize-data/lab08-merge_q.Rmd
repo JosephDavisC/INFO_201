@@ -1,0 +1,116 @@
+---
+title: "lab08-merge_q"
+author: "Joseph Chamdani"
+date: "2025-11-10"
+output: html_document
+---
+
+## **1 Dishes and ingredients**
+
+---
+
+### **1.1 You probably want to merge Dishes and Ingredients. How would you do this?**
+
+I will use a left join so all dishes remain even if ingredients are missing. Ingredients with no matching dish will be dropped or flagged merge(dishes, ingredients, by.x="name", by.y="dish", all.x=TRUE)
+
+#### **a) What will be the merge key?**
+
+The merge key would be the dish name. In the Dishes table it's called name and in the Ingredients table it's called dish.
+
+---
+
+#### **b) Do you see problems using the key you propose?**
+
+Yes, there's a problem with how the dish names are written. For example, in Dishes it says "Mummy Ji's chicken curry" but in Ingredients it says "Chicken curry (Mummy Ji's)". These are the same dish but written differently, so they won't match when we merge. We'd need to fix the names first to make them match.
+
+---
+
+#### **c) What will you do with the lines that do not match: do you want to keep dishes with no ingredients? Ingredients of the dishes not listed in the Dishes table?**
+
+If a dish doesn’t have ingredients, I’d still keep it, maybe I just don’t have its ingredient list yet. For ingredients that don’t match any dish, I’d probably drop or flag them for checking later. Basically, keep the dishes, but clean up weird ingredient leftovers after.
+
+---
+
+## **2 Grocery stores**
+
+---
+
+### **2.1 Now you selected a small number of dishes you consider making. Which datasets do you have to combine in order to find the final price for your selected dishes?**
+
+So to get the total cost for each dish, I’d start with Dishes to know which ones I’m making.
+Then I’d combine Ingredients, Local groceries, and Asian groceries to see what items are needed and how much they cost.
+That way I’m only getting prices for the dishes I actually selected.
+
+---
+
+### **2.2 You want to combine Ingredients and Local groceries. How will you do this? Will you keep ingredients that are not present in local groceries? Will you keep the grocery items that are not present in your potential ingredient list? **
+
+I’d merge them by ingredient name.  
+If some ingredients aren’t in the local store, I’d still keep them (like using all.x = TRUE) so I don’t lose any ingredients that are needed for the recipes.  
+But I wouldn’t keep extra grocery items that aren’t in my ingredient list, those aren’t needed for the dishes.
+
+
+---
+
+### **2.3 Now you combine Asian groceries to the previous data frame (combined ingredients and local groceries. Will you keep the ingredients not in the list? Will you keep grocery items not in the ingredient list?**
+
+So maybe next, I’d merge the Asian groceries data with that combined table, still using ingredient name as the key.  
+If something isn’t in the Asian store, it just stays as it is.  
+If an ingredient is missing locally but available in the Asian store, I’d fill it in from there.
+
+
+---
+
+### **2.4 What will you do with the items that are present in both grocery stores? Keep both? Keep on only one (but which one)? Something else?**
+
+If both stores sell the same ingredient, the merge will put the prices side-by-side (or on separate rows). I need to figure out which is cheaper.
+So this way I would compare the local price and the Asian price for that item, and then choose the lower price. This way, I know exactly which store to buy it from to save money.
+
+
+---
+
+### **2.5 Is it better to merge the local store data first, or the Asian store data first?** 
+
+I’d merge the local store first, then the Asian store, since that matches how I’d shop in real life. I'd check nearby stores first before going farther.  
+It’s also easier to fill in the missing prices later this way.
+
+---
+
+
+## **3 Merge on computer**
+
+---
+
+### **3.1 Load both datasets and try to merge those on computer. Do/do not keep the rows as you explain above in 1.1. Explain what happens and what kind of problems you run into.**
+
+```{r}
+library(dplyr)
+library(readr)
+
+dishes <- read_delim("dishes.csv", show_col_types = FALSE)
+ingredients <- read_delim("ingredients.csv", show_col_types = FALSE)
+
+dishes
+ingredients
+
+merged <- left_join(dishes, ingredients, by = c("name" = "dish"))
+merged 
+inner_join(dishes, ingredients, by = c("name" = "dish"))
+
+```
+
+When I merged the two files by dish name, some rows didn’t match because of small name differences.
+Using left_join() keeps all dishes (missing ones show NA), while inner_join() only keeps the ones that match.
+
+---
+
+### **3.2 What do you think, would you be able to merge much much larger datasets of dishes and ingredients in a similar fashion? What kind of problems may arise there?** 
+
+Yeah, it would work the same way, but with bigger datasets you’d get more issues.
+Typos or inconsistent keys could cause lots of unmatched rows, and joins might get slower or duplicate rows if the keys aren’t unique.
+
+---
+
+
+
+
