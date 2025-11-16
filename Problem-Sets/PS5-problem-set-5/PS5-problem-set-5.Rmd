@@ -27,8 +27,8 @@ scripps
 
 #### **1.1.2 What does a row in this dataset represent?**
 
-Each row represents one monthly CO₂ measurement taken at the Mauna Loa Observatory.
-The columns show the year, month, and the CO₂ concentration (ppm) recorded for that month.
+Each row represents one monthly CO2 measurement taken at the Mauna Loa Observatory.
+The columns show the year, month, and the CO2 concentration (ppm) recorded for that month.
 
 ---
 
@@ -42,14 +42,13 @@ scripps %>%
   count()
 
 scripps <- scripps %>%
-  mutate(co2 = if_else(co2 < 0, NA_real_, co2))
+  mutate(co2 = ifelse(co2 < 0, NA, co2))
 
 summary(scripps$co2)
 ```
 So the Scripps CO2 dataset has missing values shown as negative numbers like -99.99.
-I found 12 of these using filter(co2 < 0) and changed them to NA with
-mutate(co2 = if_else(co2 < 0, NA_real_, co2)).
-This helps clean up the data so only real CO₂ values are left. And they should be 313.2 not -99.99 now
+I found 12 of these using filter(co2 < 0) and changed them to NA with mutate(co2 = ifelse(co2 < 0, NA, co2)).
+This helps clean up the data so only real CO2 values are left. And they should be 313.2 not -99.99 now
 
 ---
 
@@ -57,7 +56,7 @@ This helps clean up the data so only real CO₂ values are left. And they should
 
 ```{r}
 scripps <- scripps %>%
-  mutate(date = as.Date(sprintf("%d-%02d-01", year, month)))
+  mutate(date = as.Date(paste(year, month, 1, sep = "-")))
 
 scripps %>%
   summarize(
@@ -65,9 +64,8 @@ scripps %>%
     latest = max(date, na.rm = TRUE)
   )
 ```
-I made a date column from the year and month.
 The earliest record is from 1958-01-01 and the most recent one is around 2025-12-01.
-This shows the data covers about 60+ years of monthly CO₂ readings.
+This shows the data covers about 60+ years of monthly CO2 readings.
 ---
 
 #### **1.1.5 Make a plot where you show how the CO2 concentration in atmosphere has changed over years.**
@@ -88,7 +86,7 @@ scripps %>%
 #### **1.1.6 Comment the graph. How has CO2 level changed through the last 60 years?**
 
 The CO2 level has increased a lot over the last 60 years.
-It started around 315 ppm in 1958 and has gone up to over 420 ppm by 2025.
+It started around 315 ppm in 1958 and has gone up to over 400+ ppm by 2025.
 The line also has small waves each year, showing natural seasonal changes, but the long-term trend is a clear steady rise.
 
 ---
@@ -143,7 +141,7 @@ head(hadcrut_long, 12)
 summary(hadcrut_long$temp_anomaly)
 
 hadcrut_long <- hadcrut_long %>%
-  mutate(temp_anomaly = if_else(temp_anomaly <= -9, NA_real_, temp_anomaly)) %>%
+  mutate(temp_anomaly = ifelse(temp_anomaly <= -9, NA, temp_anomaly)) %>%
   filter(!is.na(temp_anomaly))
 
 summary(hadcrut_long$temp_anomaly)
@@ -223,7 +221,7 @@ ggplot(hadcrut_year, aes(x = year, y = above_preindustrial)) +
   labs(
     title = "Global surface temperature (yearly) vs pre-industrial baseline",
     x = "Year",
-    y = "°C above pre-industrial (≤1900)"
+    y = "C above pre-industrial (<=1900)"
   )
 ```
 
@@ -231,7 +229,7 @@ ggplot(hadcrut_year, aes(x = year, y = above_preindustrial)) +
 ---
 
 
-#### **1.2.12 Comment the plot. How has the global temperature evolved throught last 170 years?**
+#### **1.2.11 Comment the plot. How has the global temperature evolved through last 170 years?**
 
 The global temperature stayed mostly below the pre-industrial level until the early 1900s.
 From around 1950, it started to rise quickly, and in recent years, it’s gone up by about 1.3–1.4 °C above the pre-industrial baseline.
@@ -247,7 +245,7 @@ So the plot shows that a strong warming trend over the past 170 years, especiall
 #### **1.3.1 What kind of variables you might use to merge CO2 data with global temperature data–what might be the merge key?**
 
 I would use year and month as the merge keys because both datasets record monthly values.
-This way, each CO₂ measurement can be matched with the global temperature anomaly from the same month and year.
+This way, each CO2 measurement can be matched with the global temperature anomaly from the same month and year.
 
 ---
 
@@ -260,7 +258,7 @@ hadcrut_long <- hadcrut_long %>%
 merged_data <- left_join(scripps, hadcrut_long, by = c("year", "month"))
 merged_data
 ```
-I used a left join to merge them by year and month. I kept all CO₂ rows because the CO₂ data is complete, but some temperature months might be missing. This way, we still keep every CO₂ record and just get NA for months without temperature data.
+I used a left join to merge them by year and month. I kept all CO2 rows because the CO2 data is complete, but some temperature months might be missing. This way, we still keep every CO2 record and just get NA for months without temperature data.
 
 ---
 
@@ -313,7 +311,7 @@ merged_data %>%
   ggplot(aes(x = co2, y = temp_above_preindustrial, color = decade)) +
   geom_point(size = 0.8, alpha = 0.8) +
   geom_smooth(method = "lm", se = FALSE, color = "black") +
-  scale_color_viridis_c(option = "plasma") + 
+  scale_color_gradientn(colors=heat.colors(10)) + 
   labs(
     title = "CO2 vs Temperature Anomaly by Decade (heat-colored)",
     x = "CO2 concentration (ppm)",
@@ -332,7 +330,7 @@ merged_data %>%
   ggplot(aes(x = co2, y = temp_above_preindustrial, color = decade)) +
   geom_point(size = 0.8, alpha = 0.8) +
   geom_smooth(method = "lm", se = FALSE, color = "darkorange", size = 1.2) +
-  scale_color_viridis_c(option = "plasma") +
+  scale_color_gradientn(colors = heat.colors(10)) +
   labs(
     title = "CO2 vs Temperature Anomaly with Trend Line (heat-colored by decade)",
     x = "CO2 concentration (ppm)",
@@ -352,9 +350,9 @@ merged_data %>%
   geom_point(size = 0.8, alpha = 0.8) +
   geom_smooth(method = "lm", se = FALSE, color = "darkorange", size = 1.2) + 
   geom_hline(yintercept = 1.5, color = "red", linetype = "dashed", size = 1) + 
-  scale_color_viridis_c(option = "plasma") +
+  scale_color_gradientn(colors = heat.colors(10)) +
   labs(
-    title = "CO2 vs Temperature Anomaly by Decade with Trend and 1.5°C Threshold",
+    title = "CO2 vs Temperature Anomaly by Decade with Trend",
     x = "CO2 concentration (ppm)",
     y = "Temperature anomaly (°C above pre-industrial)",
     color = "Decade"
@@ -375,7 +373,7 @@ merged_data %>%
   scale_color_viridis_c(option = "plasma", name = "Decade") +
   labs(
     title = "CO2 vs Global Temperature Anomaly by Decade",
-    subtitle = "Relative to pre-industrial baseline (≤1900)",
+    subtitle = "Relative to pre-industrial baseline (<=1900)",
     x = "CO2 concentration (ppm)",
     y = "Temperature anomaly (°C above pre-industrial)"
   )
@@ -449,7 +447,7 @@ merged_long <- merged_temp %>%
   pivot_longer(c(surface, troposphere),
                names_to = "type",
                values_to = "anomaly") %>%
-  mutate(type = if_else(type == "troposphere", "lower troposphere", type))
+  mutate(type = ifelse(type == "troposphere", "lower troposphere", type))
 
 head(merged_long, 10)
 ```
@@ -480,13 +478,19 @@ merged_long %>%
 
 ### **3.1 How do you usually figure out things that you need to know for doing the problem sets?**
 
+So usually I check the course book and lecture notes first, then try things out in R. If I get stuck, I usually ask my friends.
+
 ---
 
 ### **3.2 How long time it took for you to do this homework?**
 
+It took me 5-7 hours to complete this homework.
+
 ---
 
 ### **3.3 Which tasks were easy? Which tasks were the most challenging ones? What is most confusing? Please elaborate!**
+
+The easy parts were loading and cleaning the data. The hardest part was merging and reshaping because of small details like missing years. Plotting was fun once everything worked.
 
 ---
 
