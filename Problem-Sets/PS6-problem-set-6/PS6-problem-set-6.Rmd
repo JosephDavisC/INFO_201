@@ -1,0 +1,430 @@
+---
+title: "PS6"
+author: "Joseph Davis Chamdani"
+date: "2025-11-17"
+output: html_document
+---
+
+## **1 Color spiral**
+
+---
+
+### **1.1 Load data**
+
+---
+
+#### **1.1.1 How many rows do you have in training data and validation data?**
+
+```{r}
+library("tidyverse")
+
+spiral_training <- read_delim("spiral-1000.csv.bz2")
+spiral_validation <- read_delim("spiral.csv.bz2")
+
+
+head(spiral_training)
+head(spiral_validation)
+```
+The training dataset contains 1000 rows and the validation dataset contains 500 rows.
+
+---
+
+#### **1.1.2 Plot the training data on x-y plane, using different colors for color.**
+
+```{r}
+spiral_training %>%
+  ggplot(aes(x, y, col = factor(color))) +
+  geom_point() +
+  coord_fixed()
+
+length(unique(spiral_training$color))
+```
+There are 4 different colors in the training dataset.
+
+---
+
+### **1.2 k-Nearest Neighbors**
+
+---
+
+#### **1.2.1 Create training and validation “design frame” X and “outcome vector” y. Ensure they only contain x and y, and not color or any other attributes.**
+
+```{r}
+X_train <- spiral_training %>%
+  select(x, y)
+
+y_train <- spiral_training$color
+
+X_valid <- spiral_validation %>%
+  select(x, y)
+
+y_valid <- spiral_validation$color
+
+head(X_train)
+head(y_train)
+```
+
+---
+
+#### **1.2.2 Use knn library to predict color on training data using k = 1**
+
+```{r}
+library(class)
+
+y_pred_train <- knn(
+  train = X_train,
+  test = X_train,
+  cl = y_train,
+  k = 1
+)
+```
+
+---
+
+#### **1.2.3 Display the confusion matrix**
+
+```{r}
+table(Predicted = y_pred_train, Actual = y_train)
+```
+
+---
+
+#### **1.2.4 Compute accuracy**
+
+```{r}
+accuracy <- mean(y_pred_train == y_train)
+accuracy
+```
+
+
+---
+
+#### **1.2.5 Make a decision boundary plot using only training data. Explain why do you get accuracy 100%**
+
+```{r}
+x_range <- seq(min(spiral_training$x) - 0.2,
+               max(spiral_training$x) + 0.2,
+               length.out = 200)
+
+y_range <- seq(min(spiral_training$y) - 0.2,
+               max(spiral_training$y) + 0.2,
+               length.out = 200)
+
+grid <- expand.grid(x = x_range, y = y_range)
+
+grid$pred <- knn(
+  train = X_train,
+  test  = grid,
+  cl    = y_train,
+  k     = 1
+)
+
+ggplot() +
+  geom_raster(data = grid,
+              aes(x = x, y = y, fill = pred),
+              alpha = 0.3) +
+  geom_point(data = spiral_training,
+             aes(x = x, y = y, col = factor(color)),
+             size = 1) +
+  coord_fixed()
+```
+
+Accuracy on the training data is 100 percent because with k equal to 1 every point uses itself as the nearest neighbor, so the predicted label always matches the true label.
+
+---
+
+#### **1.2.6 Now repeat questions 2–5, but use validation data instead of training data.**
+
+```{r}
+y_pred_valid <- knn(
+  train = X_train,
+  test  = X_valid,
+  cl    = y_train,
+  k     = 1
+)
+
+###
+
+table(Predicted = y_pred_valid, Actual = y_valid)
+
+
+###
+
+accuracy <- mean(y_pred_valid == y_valid)
+accuracy
+
+
+###
+
+spiral_validation %>%
+  ggplot(aes(x, y, col = factor(color))) +
+  geom_point() +
+  coord_fixed()
+```
+
+The accuracy on the validation data is not 100 percent because the validation points were not used during training. Some validation points lie closer to training points of the wrong class, especially where the classes overlap, so kNN misclassifies them.
+
+
+---
+
+
+### **1.3 Find the best k**
+
+---
+
+#### **1.3.1 Pick a range of k-s 1-15 or so.**
+
+```{r}
+k_values <- 1:15
+k_values
+```
+
+---
+
+#### **1.3.2 Loop over the range of k. For each k value do:**
+
+---
+
+##### **a) Compute predictions on training data and validation data. **
+
+```{r}
+pred_train_list <- list()
+pred_valid_list <- list()
+
+for (k in k_values) {
+  
+  pred_train <- knn(
+    train = X_train,
+    test  = X_train,
+    cl    = y_train,
+    k     = k
+  )
+  
+  pred_valid <- knn(
+    train = X_train,
+    test  = X_valid,
+    cl    = y_train,
+    k     = k
+  )
+  
+  pred_train_list[[as.character(k)]] <- pred_train
+  pred_valid_list[[as.character(k)]] <- pred_valid
+}
+```
+
+----
+
+#### **b) Compute training accuracy and validation accuracy. Store these in corresponding vectors. **
+
+```{r}
+train_acc <- numeric(length(k_values))
+valid_acc <- numeric(length(k_values))
+
+for (i in seq_along(k_values)) {
+
+  k <- k_values[i]
+  
+  
+  train_acc[i] <- mean(pred_train_list[[as.character(k)]] == y_train)
+  
+  
+  valid_acc[i] <- mean(pred_valid_list[[as.character(k)]] == y_valid)
+}
+```
+
+
+---
+
+#### **1.3.3 Make the a data frame that contains k, training accuracy and validation accuracy. You want to have it in long form for plotting, but it is easier to create it in wide form and then reshape to a long form**
+
+---
+
+```{r}
+acc_df <- data.frame(
+  k = k_values,
+  train_acc = train_acc,
+  valid_acc = valid_acc
+)
+
+acc_df
+```
+
+---
+
+#### **1.3.4 Make a plot where you show how the training and validation accuracy depend on k. Mark the different kind of accuracies with different color.**
+
+```{r}
+acc_long <- acc_df %>%
+  pivot_longer(
+    cols = c(train_acc, valid_acc),
+    names_to = "type",
+    values_to = "accuracy"
+  )
+
+ggplot(acc_long, aes(x = k, y = accuracy, color = type)) +
+  geom_line() +
+  geom_point()
+```
+
+The best k is the one with the highest validation accuracy in this plot.
+
+---
+
+
+## **2 Skin Color**
+
+---
+
+### **2.1 Explore and prepare**
+
+---
+
+#### **2.1.1 Load data. Below, use only a subsample of 10,000 rows as otherwise the k-NN may get too slow and fail to work at all.**
+
+```{r}
+skin_full <- read_delim("skin-nonskin.csv")
+
+set.seed(201)         
+skin <- skin_full %>% 
+  sample_n(10000)
+```
+
+
+---
+
+##### **a) Number of rows/columns (should be 10k rows).**
+
+```{r}
+nrow(skin)
+ncol(skin)
+```
+
+---
+
+##### **b) Print a few lines of data **
+
+```{r}
+head(skin)
+```
+
+
+---
+
+##### **c) Does the dataset contain any missings? **
+
+```{r}
+anyNA(skin)
+
+skin %>%
+  summarise(across(everything(), ~ sum(is.na(.))))
+```
+
+
+---
+
+##### **d) What percentage of labels are “1”, what percentage are “2”? **
+
+```{r}
+table(skin$Label)
+
+
+prop.table(table(skin$Label)) * 100
+```
+
+
+---
+
+
+### **2.2 Find the best k**
+
+---
+
+#### **2.2.1 Loop over different k values. For each k**
+
+---
+
+##### **a) Fit the model on training data, and do predictions on both training and validation data.**
+
+```{r}
+k_values <- 1:15
+
+pred_train_list <- list()
+pred_valid_list <- list()
+
+for (k in k_values) {
+  
+  pred_train <- knn(
+    train = X_train,
+    test  = X_train,
+    cl    = y_train,
+    k     = k
+  )
+  
+  pred_valid <- knn(
+    train = X_train,
+    test  = X_valid,
+    cl    = y_train,
+    k     = k
+  )
+  
+  pred_train_list[[as.character(k)]] <- pred_train
+  pred_valid_list[[as.character(k)]] <- pred_valid
+}
+
+```
+
+---
+
+##### **b) Compute training and validation accuracy **
+
+```{r}
+train_acc <- numeric(length(k_values))
+valid_acc <- numeric(length(k_values))
+
+for (i in seq_along(k_values)) {
+  k <- k_values[i]
+  
+  train_acc[i] <- mean(pred_train_list[[as.character(k)]] == y_train)
+  valid_acc[i] <- mean(pred_valid_list[[as.character(k)]] == y_valid)
+}
+```
+
+
+---
+
+##### **c) Store those in a vector **
+
+```{r}
+acc_skin <- data.frame(
+  k = k_values,
+  train_acc = train_acc,
+  valid_acc = valid_acc
+)
+
+acc_skin
+```
+
+
+---
+
+#### **2.2.2 Make a plot where you show how do training and validation accuracy depend on k. Adjust your k range that you can show what is the best k. **
+
+```{r}
+acc_skin_long <- acc_skin %>%
+  pivot_longer(
+    cols = c(train_acc, valid_acc),
+    names_to = "type",
+    values_to = "accuracy"
+  )
+
+ggplot(acc_skin_long, aes(x = k, y = accuracy, color = type)) +
+  geom_line() +
+  geom_point()
+```
+
+---
+
+It took me 7-8 hours to complete this homework.
+
+
+[![](jo_stress.PNG){width=19%}](https://joechamdani.com/)
