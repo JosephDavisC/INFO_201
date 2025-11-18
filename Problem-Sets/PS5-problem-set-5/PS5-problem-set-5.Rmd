@@ -188,7 +188,7 @@ pre_industrial_baseline
 #### **1.2.8 If you did it correctly, you get a number between -0.3 and -0.4C. What does the it mean that the number is negative?**
 
 The number is negative because the pre-industrial period was colder than the 1961–1990 average.
-So a value like –0.36 °C means temperatures before 1900 were about 0.36 °C lower than the baseline used in the HadCRUT dataset.
+So a value like –0.36 C means temperatures before 1900 were about 0.36 C lower than the baseline used in the HadCRUT dataset.
 
 ---
 
@@ -216,8 +216,7 @@ hadcrut_year <- hadcrut_long %>%
 ggplot(hadcrut_year, aes(x = year, y = above_preindustrial)) +
   geom_line() +
   geom_point(size = 0.3) +
-  geom_hline(yintercept = 1.5, linetype = 2) +
-  geom_hline(yintercept = 2.0, linetype = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
   labs(
     title = "Global surface temperature (yearly) vs pre-industrial baseline",
     x = "Year",
@@ -232,7 +231,7 @@ ggplot(hadcrut_year, aes(x = year, y = above_preindustrial)) +
 #### **1.2.11 Comment the plot. How has the global temperature evolved through last 170 years?**
 
 The global temperature stayed mostly below the pre-industrial level until the early 1900s.
-From around 1950, it started to rise quickly, and in recent years, it’s gone up by about 1.3–1.4 °C above the pre-industrial baseline.
+From around 1950, it started to rise quickly, and in recent years, it’s gone up by about 1.3–1.4 C above the pre-industrial baseline.
 So the plot shows that a strong warming trend over the past 170 years, especially after the 1980s.
 
 ---
@@ -275,7 +274,7 @@ merged_data %>%
   labs(
     title = "CO2 vs Global Temperature Anomaly (above pre-industrial baseline)",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)"
+    y = "Temperature anomaly (C above pre-industrial)"
   )
 ```
 
@@ -297,7 +296,7 @@ merged_data %>%
   labs(
     title = "CO2 vs Global Temperature Anomaly (marked by years)",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)"
+    y = "Temperature anomaly (C above pre-industrial)"
   )
 ```
 
@@ -315,7 +314,7 @@ merged_data %>%
   labs(
     title = "CO2 vs Temperature Anomaly by Decade (heat-colored)",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)",
+    y = "Temperature anomaly (C above pre-industrial)",
     color = "Decade"
   )
 ```
@@ -334,7 +333,7 @@ merged_data %>%
   labs(
     title = "CO2 vs Temperature Anomaly with Trend Line (heat-colored by decade)",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)",
+    y = "Temperature anomaly (C above pre-industrial)",
     color = "Decade"
   )
 ```
@@ -354,7 +353,7 @@ merged_data %>%
   labs(
     title = "CO2 vs Temperature Anomaly by Decade with Trend",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)",
+    y = "Temperature anomaly (C above pre-industrial)",
     color = "Decade"
   )
 ```
@@ -375,7 +374,7 @@ merged_data %>%
     title = "CO2 vs Global Temperature Anomaly by Decade",
     subtitle = "Relative to pre-industrial baseline (<=1900)",
     x = "CO2 concentration (ppm)",
-    y = "Temperature anomaly (°C above pre-industrial)"
+    y = "Temperature anomaly (C above pre-industrial)"
   )
 ```
 
@@ -464,7 +463,7 @@ merged_long %>%
   geom_smooth(method = "lm", se = FALSE, linewidth = 1) +
   labs(title = "Temperature Anomaly over Time by Type",
        x = "Year",
-       y = "Temperature Anomaly (°C)",
+       y = "Temperature Anomaly (C)",
        color = "Type") +
   scale_color_manual(values = c("surface" = "orange", "lower troposphere" = "skyblue"))
 ```
@@ -494,4 +493,4 @@ The easy parts were loading and cleaning the data. The hardest part was merging 
 
 ---
 
-![](jo-sticker.PNG){width=19%}
+[![](jo_stress.PNG){width=19%}](https://joechamdani.com/)
