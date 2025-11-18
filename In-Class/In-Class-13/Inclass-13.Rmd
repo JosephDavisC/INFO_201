@@ -1,0 +1,152 @@
+---
+title: "Inclass-13"
+author: "Joseph Davis Chamdani"
+date: "2025-11-17"
+output: html_document
+---
+
+```{r}
+    results <- read_delim("bib#,time
+102,58:30
+101,59:45
+104,1:00:15
+103,1:02:30", col_types="ic")
+results
+
+```
+
+```{r}
+    results <- read_delim("bib#,time
+102,58:30
+101,59:45
+104,1:00:15
+103,1:02:30")
+results
+```
+
+```{r}
+results %>% 
+  pull(time) %>% 
+  range()
+```
+
+```{r}
+results %>% 
+  ggplot(aes(time)) +
+  geom_histogram(bins = 100)
+```
+ 
+ 
+```{r}
+  results <- read_delim("bib#,time
+102,58:30
+101,59:45
+104,1:00:15
+103,1:02:30", 
+col_types = list(time = "character"))
+results
+```
+ 
+```{r}
+results %>% 
+  mutate(tm = ifelse(nchar(time) <= 5, 
+                     paste0("00:", time),
+                     time))
+```
+ 
+```{r}
+results %>% 
+  mutate(tm = ifelse(nchar(time) <= 5, 
+                     paste0("00:", time),
+                     time)) %>% 
+
+mutate(tm = parse_time(tm))
+```
+ 
+```{r}
+results %>% 
+  mutate(tm = ifelse(nchar(time) <= 5, 
+                     paste0("00:", time),
+                     time)) %>% 
+  mutate(tm = parse_time(tm)) %>% 
+  ggplot(aes(tm)) +
+    geom_histogram(bins = 40)
+```
+ 
+```{r}
+grep("a", c("a", "ab", "cd"))
+```
+ 
+```{r}
+grep("a", c("a", "ab", "cd"), value = TRUE)
+
+```
+ 
+```{r}
+grep(".", c("a", "ab", "cd"))
+```
+ 
+```{r}
+grep("hands?", c("hand", "hands", "handsx"), value = TRUE)
+```
+ 
+```{r}
+grep("hands*", c("hand", "hands", "handsssx"), value = TRUE)
+```
+ 
+```{r}
+grep("hands*x", c("handx", "handsx", "handsssx"), value = TRUE)
+```
+ 
+```{r}
+grep("^hands?$", c("hand", "hands", "both hands", "handy"), value = TRUE)
+```
+ 
+```{r}
+grep("^..$", c("as", "b", "cde"), value = TRUE)
+```
+ 
+```{r}
+grep("^(10)*$", c("10", "10101010", "", "010101"), value = TRUE)
+```
+ 
+```{r}
+grep("^0?(10)*1?$", c("10", "10101010", "", "010101"),
+     value = TRUE)
+```
+ 
+```{r}
+grep("^_.*_$",
+     c("_italic_", "_xyz_", "_x_1_", 
+       "**bold**", "normal text"),  
+      value = TRUE)
+```
+ 
+ 
+```{r}
+gsub("^a", "b", c("abc", "aabb", "can you"))
+```
+ 
+```{r}
+gsub("a", "x", c("those damned cows!"))
+```
+ 
+```{r}
+gsub("a", "e", c("those damned cows!"))
+```
+ 
+ 
+```{r}
+gsub("os", "es", c("those damned cows!"))
+```
+ 
+```{r}
+gsub("(.)s", "\1z", "those damed cows!")
+```
+ 
+```{r}
+gsub("(.)s", r"(\1z)", "those damned cows!")
+```
+ 
+ 
+ 
