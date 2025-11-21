@@ -1,5 +1,93 @@
 ---
 title: "Inclass-12"
+author: "Joseph Davis Chamdani"
+date: "2025-11-12"
 output: html_document
 ---
+
+```{r}
+library(tidyverse)
+
+d <- read_delim("alcohol-disorders.csv") %>% 
+  filter(Year == 2015) %>% 
+  select(country, disordersF, disordersM)
+d
+```
+
+
+```{r}
+
+d %>% 
+  pivot_longer(c(disordersF, disordersM),
+               names_to = "sex", values_to = "disoders")
+
+```
+
+```{r}
+d %>% 
+  pivot_longer(c(disordersF, disordersM),
+               names_to = "sex", values_to = "disoders") %>% 
+  mutate(sex = ifelse(sex == "disordersF", "F", "M"))
+```
+```{r}
+dw <- d %>% 
+  pivot_longer(c(disordersF, disordersM),
+               names_to = "sex", values_to = "disorders") %>% 
+  mutate(sex = ifelse(sex == "disordersF", "F", "M"))
+
+```
+
+
+```{r}
+dw %>% 
+  pivot_wider(names_from = sex,
+              values_from = disorders)
+```
+
+```{r}
+dw %>% 
+  pivot_wider(names_from = c(country,sex),
+              values_from = disorders)
+```
+
+```{r}
+d <- read_delim("alcohol-disorders.csv")
+d %>% 
+  sample_n(4)
+
+```
+
+```{r}
+d %>% 
+  pivot_longer(c(disordersF, disordersM),
+               names_to = "sex",
+               values_to = "disordrs") %>% 
+  mutate(sex = ifelse(sex == "disordersF", "F", "M")) %>% 
+  head(7)
+```
+
+
+```{r}
+dl <- d %>% 
+  pivot_longer(c(disordersF, disordersM),
+               names_to = "sex",
+               values_to = "disordrs") %>% 
+  mutate(sex = ifelse(sex == "disordersF", "F", "M"))
+dl %>% 
+  head(5)
+```
+```{r}
+dl %>% 
+  pivot_wider(names_from = sex,
+              values_from = disordrs)
+```
+
+```{r}
+dl %>% 
+  pivot_wider(names_from = Year,
+              values_from = c(disordrs, population))
+```
+```{r}
+
+```
 

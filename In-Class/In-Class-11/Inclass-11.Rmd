@@ -31,7 +31,7 @@ output: html_document
 
 ```{r}
       students <- data.frame(
-         name = c("Cecilia",
+         student = c("Cecilia",
                   "Marco",
                   "Guangqi"),
          "GPA 2023-au" = c(4.0,
@@ -68,5 +68,29 @@ cbind(students, students24) %>%
 
 ```{r}
 merge(students, students24, by.x = "student", by.y = "name")
+```
+
+```{r}
+ contact <- data.frame(
+     id = 1:4,
+     email = c("lisoc@", "zemath@", "bioarlin@", "uv98@"))
+  majors <- data.frame(
+     studentId = c(1:3, 5),
+     major = c("sociology", "math", "biology", "info"))
+  contact
+```
+```{r}
+merge(contact, majors, by.x = "id", by.y = "studentId")
+```
+
+```{r}
+merge(contact, majors, by.x = "id", by.y = "studentId",
+      all.y = TRUE)
+```
+
+```{r}
+df1 <- data.frame (a = 1:2)
+df2 <- data.frame(b = c("a", "b"))
+merge(df1, df2)
 ```
 

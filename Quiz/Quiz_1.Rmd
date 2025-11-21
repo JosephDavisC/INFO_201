@@ -3,3 +3,63 @@ title: "Quiz_1"
 output: html_document
 ---
 
+```{r}
+for (i in 1:5) {
+  cat(i, i+1, "\n")
+}
+
+```
+
+```{r}
+names <- c("Maria", "Daniel", "Mark", "Jenna", "Ricky")
+statuses <- c("Freshman", "Freshman", "Senior", "Junior", "Sophomore")
+majors <- c("Biology", "Mathematics", "Informatics", "History", "Education")
+
+fresh_senior <- statuses == "Freshman" | statuses == "Senior"
+
+names[fresh_senior]
+
+```
+
+
+```{r}
+vector <- c(10, 20, 30, 40, 50)
+vector * 2 + 2
+
+vector[2]
+```
+
+
+```{r}
+gravity <- function(G, m1, m2, r) {
+  f <- (G*m1*m2) / (r^2)
+  return (f)
+}
+
+gravity(9.8, 20, 34, 2)
+```
+
+```{r}
+letters <- c("a", "k", "p")
+check <- c("a", "n", "p", "r", "x")
+
+in_letters <- c()
+for (i in check) {
+  for (l in letters) {
+    if (i == l) {
+      in_letters <- c(in_letters, i)
+      break
+    }
+  }
+}
+
+in_letters
+
+```
+
+```{r}
+for (i in seq(1,5, by= 1)){
+  cat(i,i+1,"\n")
+}
+```
+

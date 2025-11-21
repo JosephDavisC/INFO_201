@@ -5,3 +5,44 @@ date: 11-05-2025
 output: html_document
 ---
 
+```{r}
+library(tidyverse)
+tomato <- read_delim("tomatoes-greenhouse.csv")
+tomato
+```
+```{r}
+tomato %>%
+  ggplot(aes(age, size, col = temperature)) +
+  geom_line()+
+  geom_point()
+```
+```{r}
+
+tomato %>% 
+  ggplot(aes(age, size,
+             col = temperature
+             ,group = plant))+
+  geom_line(col = "gray") +
+  geom_point(aes(col = temperature))
+
+```
+
+
+```{r}
+orange <- read_delim("orange-trees (1).csv")
+orange
+```
+```{r}
+orange %>% 
+  sample_n(4)
+```
+
+```{r}
+orange %>% 
+  group_by(tree) %>% 
+  filter(rank(desc(age)) == 1) %>% 
+  ggplot(aes(tree, circumference,
+             fill = factor(tree))) +
+  geom_col()
+```
+

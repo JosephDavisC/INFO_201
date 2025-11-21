@@ -17,6 +17,8 @@ output: html_document
 
 ```{r}
 library(tidyverse)
+library(class)
+
 scripps <- read_delim("scripps-co2.csv") %>%
   select(year, month, co2)
 

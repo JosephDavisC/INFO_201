@@ -1,5 +1,59 @@
 ---
-title: "Inclass-8"
+title: "inclass-8"
+author: "Joseph Davis Chamdani"
+date: "2025-10-29"
 output: html_document
 ---
+
+```{r}
+gsaf <- read.delim("GSAF5.csv") 
+gsaf %>%
+  dim()
+```
+
+```{r}
+gsaf <- read_delim("GSAF5.csv") 
+gsaf %>%
+  dim()
+```
+
+```{r}
+gsaf %>%
+  names()
+```
+```{r}
+gsaf %>%
+  tail(5)
+```
+
+```{r}
+gsaf %>%
+  select(Date,Year, Country, `Sex `, Age, `Fatal (Y/N)`) %>%
+  sample_n(5)
+```
+```{r}
+gsaf %>%
+  select(Date,Year, Country, `Sex `, Age, `Fatal (Y/N)`) %>%
+```
+
+
+```{r}
+rename(sex = `Sex `, = fatal = `Fatal (Y/N)`) %>%
+  sample_n(5)
+```
+
+```{r}
+gsaf %>%
+  pull(Year)%>%
+  class()
+```
+
+```{r}
+gsaf %>% 
+  select(Date, Year, Country, Age, ⁠ Sex `, `Fatal (Y/N) ⁠`) %>% 
+  rename(sex =⁠ Sex `, fatal = `Fatal (Y/N)` ⁠) %>% 
+  mutate(year = ass.numeric(Year)) %>% 
+  select(Year, year) %>%
+  sample_n(6)
+```
 

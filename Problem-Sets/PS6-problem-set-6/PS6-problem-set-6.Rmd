@@ -16,14 +16,17 @@ output: html_document
 #### **1.1.1 How many rows do you have in training data and validation data?**
 
 ```{r}
-library("tidyverse")
+library(tidyverse)
+library(class)
 
-spiral_training <- read_delim("spiral-1000.csv.bz2")
-spiral_validation <- read_delim("spiral.csv.bz2")
+spiral_training <- read_delim("spiral-1000.csv.bz2") %>% 
+  mutate(color = factor(color))
 
+spiral_validation <- read_delim("spiral.csv.bz2") %>% 
+  mutate(color = factor(color))
 
-head(spiral_training)
-head(spiral_validation)
+nrow(spiral_training)
+nrow(spiral_validation)
 ```
 The training dataset contains 1000 rows and the validation dataset contains 500 rows.
 
@@ -32,8 +35,8 @@ The training dataset contains 1000 rows and the validation dataset contains 500 
 #### **1.1.2 Plot the training data on x-y plane, using different colors for color.**
 
 ```{r}
-spiral_training %>%
-  ggplot(aes(x, y, col = factor(color))) +
+spiral_training %>% 
+  ggplot(aes(x, y, col = color)) +
   geom_point() +
   coord_fixed()
 
@@ -50,12 +53,12 @@ There are 4 different colors in the training dataset.
 #### **1.2.1 Create training and validation “design frame” X and “outcome vector” y. Ensure they only contain x and y, and not color or any other attributes.**
 
 ```{r}
-X_train <- spiral_training %>%
+X_train <- spiral_training %>% 
   select(x, y)
 
 y_train <- spiral_training$color
 
-X_valid <- spiral_validation %>%
+X_valid <- spiral_validation %>% 
   select(x, y)
 
 y_valid <- spiral_validation$color
@@ -69,14 +72,14 @@ head(y_train)
 #### **1.2.2 Use knn library to predict color on training data using k = 1**
 
 ```{r}
-library(class)
-
-y_pred_train <- knn(
+yhat_train <- knn(
   train = X_train,
-  test = X_train,
-  cl = y_train,
-  k = 1
+  test  = X_train,
+  cl    = y_train,
+  k     = 1
 )
+
+yhat_train
 ```
 
 ---
@@ -84,7 +87,7 @@ y_pred_train <- knn(
 #### **1.2.3 Display the confusion matrix**
 
 ```{r}
-table(Predicted = y_pred_train, Actual = y_train)
+table(yhat_train, y_train)
 ```
 
 ---
@@ -92,8 +95,8 @@ table(Predicted = y_pred_train, Actual = y_train)
 #### **1.2.4 Compute accuracy**
 
 ```{r}
-accuracy <- mean(y_pred_train == y_train)
-accuracy
+acc_train_k1 <- mean(yhat_train == y_train)
+acc_train_k1
 ```
 
 
@@ -102,31 +105,21 @@ accuracy
 #### **1.2.5 Make a decision boundary plot using only training data. Explain why do you get accuracy 100%**
 
 ```{r}
-x_range <- seq(min(spiral_training$x) - 0.2,
-               max(spiral_training$x) + 0.2,
-               length.out = 200)
+ex <- seq(min(X_train$x), max(X_train$x), length.out = 60)
+ey <- seq(min(X_train$y), max(X_train$y), length.out = 60)
 
-y_range <- seq(min(spiral_training$y) - 0.2,
-               max(spiral_training$y) + 0.2,
-               length.out = 200)
+grid <- merge(ex, ey)
+names(grid) <- c("x", "y")
 
-grid <- expand.grid(x = x_range, y = y_range)
+grid$color <- knn(X_train, grid, y_train, k = 1)
 
-grid$pred <- knn(
-  train = X_train,
-  test  = grid,
-  cl    = y_train,
-  k     = 1
-)
-
-ggplot() +
-  geom_raster(data = grid,
-              aes(x = x, y = y, fill = pred),
-              alpha = 0.3) +
-  geom_point(data = spiral_training,
-             aes(x = x, y = y, col = factor(color)),
-             size = 1) +
-  coord_fixed()
+ggplot(grid, aes(x, y)) +
+geom_tile(aes(fill = color), alpha = 0.35) +
+geom_point(data = spiral_training,
+aes(x, y, col = color),
+size = 0.6) +
+theme(legend.position = "none") +
+coord_fixed()
 ```
 
 Accuracy on the training data is 100 percent because with k equal to 1 every point uses itself as the nearest neighbor, so the predicted label always matches the true label.
@@ -136,30 +129,19 @@ Accuracy on the training data is 100 percent because with k equal to 1 every poi
 #### **1.2.6 Now repeat questions 2–5, but use validation data instead of training data.**
 
 ```{r}
-y_pred_valid <- knn(
-  train = X_train,
-  test  = X_valid,
-  cl    = y_train,
-  k     = 1
-)
+yhat_valid <- knn(X_train, X_valid, y_train, k = 1)
 
-###
+cm_valid <- table(yhat_valid, y_valid)
+cm_valid
 
-table(Predicted = y_pred_valid, Actual = y_valid)
-
-
-###
-
-accuracy <- mean(y_pred_valid == y_valid)
-accuracy
-
-
-###
+acc_valid_k1 <- mean(yhat_valid == y_valid)
+acc_valid_k1
 
 spiral_validation %>%
-  ggplot(aes(x, y, col = factor(color))) +
-  geom_point() +
-  coord_fixed()
+ggplot(aes(x, y, col = color)) +
+geom_point() +
+coord_fixed()
+
 ```
 
 The accuracy on the validation data is not 100 percent because the validation points were not used during training. Some validation points lie closer to training points of the wrong class, especially where the classes overlap, so kNN misclassifies them.

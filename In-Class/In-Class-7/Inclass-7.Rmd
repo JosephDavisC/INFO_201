@@ -1,5 +1,49 @@
 ---
-title: "Inclass-7"
+title: "inclass-7"
+author: "Joseph Davis Chamdani"
+date: "2025-10-22"
 output: html_document
 ---
+```{r}
+c(1,2,3) %>%
+  max() %>%
+  print()
+```  
 
+```{r}
+titanic <- read.csv("titanic.csv")
+head(titanic)
+```
+
+```{r}
+titanic <- titanic %>%
+  select(pclass, survived, sex, age)
+
+titanic
+```
+
+```{r}
+titanic <- titanic %>%
+  select(pclass, survived, sex, age)
+titanic
+```
+
+```{r}
+titanic <- titanic %>%
+  select(pclass, sex, survived, age)
+titanic
+```
+
+```{r}
+titanic %>%
+  filter(survived == 1 & pclass == 1) 
+
+titanic %>%
+  filter(survived == 1) %>% 
+  filter(pclass == 1)
+```
+
+```{r}
+titanic %>%
+  filter(survived == 0 & sex == "female")
+```

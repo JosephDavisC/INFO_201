@@ -1,0 +1,168 @@
+---
+title: "lab09-clean_q"
+author: "Joseph Chamdani, Winson Teh, Kenneth Wu, Hanjun Ma"
+date: "2025-11-18"
+output: html_document
+---
+
+## **1 Dawg dash running times**
+
+---
+
+### **1.1 Load the Dawgs Dash dataset and ensure it is good.**
+
+```{r}
+library("tidyverse")
+
+dawgs <- read_delim("dawgs-dash-5k-2023.csv")
+
+head(dawgs)
+glimpse(dawgs)
+summary(dawgs)
+
+```
+
+---
+
+### **1.2 What are the data types of the columns category and time?**
+
+```{r}
+class(dawgs$category)
+class(dawgs$time)
+```
+
+---
+
+### **1.3 Convert the time to duration, but so that format “mm:ss” is understood as minutes-seconds, and “hh:mm:ss” is understood as hours, minutes, seconds.**
+
+```{r}
+dawgs <- read_delim("dawgs-dash-5k-2023.csv",
+  col_types = list(time = "c")
+)
+
+dawgs <- dawgs %>%
+  mutate(
+    time = ifelse(
+      str_count(time, ":") == 1,
+      paste0("00:", time),
+      time
+    ),
+    time = parse_time(time)
+  )
+
+dawgs
+
+```
+
+---
+
+### **1.4 Look at the time of 3 fastest, and 3 slowest runners. You can just use head and tail as data is ordered by time. Do the results look sensible?**
+
+```{r}
+dawgs_sorted <- dawgs %>%
+  arrange(time)
+
+head(dawgs_sorted, 3)
+tail(dawgs_sorted, 3)
+```
+
+---
+
+### **1.5 Finally, make a histogram of the running times**
+
+```{r}
+dawgs %>%
+  ggplot(aes(time)) +
+  geom_histogram() +
+  labs(
+    x = "Finish time",
+    y = "Count",
+    title = "Distribution of Dawg Dash 5K times"
+  )
+```
+
+---
+
+## **2 Gender, age, and athletic performance**
+
+---
+
+### **2.1 Use regular expression to separate sex from category. Ensure that the result will not contain a whitespace**
+
+```{r}
+dawgs <- dawgs %>%
+  mutate(
+    sex = gsub("[[:digit:]]", "", category),
+    sex = gsub("\\|", "", sex),
+    sex = gsub("[[:space:]]", "", sex)
+  )
+
+head(dawgs) 
+```
+---
+
+### **2.2 Use regular expression to separate age. Convert it to numeric.**
+```{r}
+dawgs <- dawgs %>%
+  mutate(
+    age = gsub("[^[:digit:]]*", "", category),
+    age = as.numeric(age)
+  )
+
+head(dawgs)
+```
+
+---
+
+### **2.3 Check that age and sex values are plausible. Below, only keep “M” and “F” sex, ignore the others**
+```{r}
+dawgs_clean <- dawgs %>%
+  filter(
+    sex %in% c("M", "F"),
+    !is.na(age),
+    age >= 10,
+    age <= 90
+  )
+
+summary(dawgs_clean)
+table(dawgs_clean$sex)
+```
+---
+
+### **2.4 Display the distribution of running time separately for both men and women. Ensure that you display densities, not counts. Choose an appropriate way to display the distribution and explain why did you chose such visualization.**
+
+```{r}
+dawgs_clean %>% 
+  ggplot(aes(x = time, fill = sex)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Distribution of running times by sex",
+    x = "Finish time",
+    y = "Density"
+  )
+```
+We used a density plot because it shows the shape of the distribution clearly and lets me compare men and women on the same scale. It smooths the data, avoids the issue of different group sizes, and makes it easier to see where each group’s finish times are concentrated.
+
+---
+
+### **2.5 Now replicate the density comparison for the “prime age” group (say, 18-30, as this is the peak performance years for runners).**
+
+```{r}
+dawgs_prime <- dawgs_clean %>% 
+  filter(age >= 18, age <= 30)
+
+dawgs_prime %>% 
+  ggplot(aes(x = time, fill = sex)) +
+  geom_density(alpha = 0.5) +
+  labs(
+    title = "Distribution of running times by sex, age 18 to 30",
+    x = "Finish time",
+    y = "Density"
+  )
+```
+
+---
+
+### **2.6 If you did it correctly, you can see a fairly pronounced secondary peak for women at around 1hr (it is much weaker for men). What do you think, why is the distribution bimodal?**
+
+We're not fully sure, but our guess is that the women’s distribution has two bumps because the group might include both faster runners and more casual runners. Mixing those different pace groups could make the curve look bimodal.

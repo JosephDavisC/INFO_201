@@ -1,0 +1,145 @@
+---
+title: "Inclass-14"
+author: "Joseph Davis Chamdani"
+date: "2025-11-19"
+output: html_document
+---
+
+```{r}
+ yinyang <- read_delim("yin-yang.csv") %>% 
+  mutate(c = factor(c))
+head(yinyang)
+```
+
+```{r}
+yinyang %>% 
+  ggplot(aes(x, y, col = c)) +
+  geom_point() +
+  coord_fixed()
+
+```
+
+```{r}
+library(class)
+packageVersion(("class"))
+```
+
+```{r}
+X <- yinyang %>% 
+  select(x,y) #attributes
+y <- yinyang$c #label
+
+Xpredict <- data.frame(x= -2:2, y = 2:-2)
+knn(X, Xpredict ,y, 2)
+
+```
+
+```{r}
+X <- yinyang %>% 
+  select(x,y) #attributes
+y <- yinyang$c #label
+
+Xpredict <- data.frame(x= -2:2, y = 2:-2)
+clhat <- knn(X, Xpredict ,y, 2)
+Xpredict$c <- clhat
+```
+
+```{r}
+yinyang %>% 
+  ggplot(aes(x, y, col = c, pch = c)) +
+  geom_point() +
+  geom_point(data = Xpredict, pch = 1, size = 3) +
+  coord_fixed()
+```
+
+```{r}
+ex <- seq(min(X$x), max(X$x), length.out = 50)
+ey <- seq(min(X$y), max(X$y), length.out = 50)
+grid <- merge(ex, ey)
+grid$c <- knn(X, grid, y, k = 1)
+ggplot(grid, aes(x, y)) +
+   geom_tile(data = grid,
+             aes(fill = c),
+             alpha = 0.35) +
+   geom_point(data = yinyang,
+              aes(col = c),
+              size = 0.5) +
+   theme(legend.position = "none") +
+   coord_fixed()
+```
+
+
+```{r}
+ex <- seq(min(X$x), max(X$x), length.out = 50)
+ey <- seq(min(X$y), max(X$y), length.out = 50)
+grid <- merge(ex, ey)
+grid$c <- knn(X, grid, y, k = 5)
+ggplot(grid, aes(x, y)) +
+   geom_tile(data = grid,
+             aes(fill = c),
+             alpha = 0.35) +
+   geom_point(data = yinyang,
+              aes(col = c),
+              size = 0.5) +
+   theme(legend.position = "none") +
+   coord_fixed()
+```
+
+
+```{r}
+clhat <- knn(X, X, y, k = 5)
+clhat[1:30]
+y[1:30]
+```
+
+
+```{r}
+table(clhat, y)
+```
+```{r}
+(105 + 82) / (105 + 82 + 9 +4)
+```
+
+```{r}
+cm <- table(clhat, y)
+(cm[1,1] + cm[2,2]) / sum(cm)
+```
+
+```{r}
+mean(y == clhat)
+```
+
+```{r}
+yhat <- knn(X, X, y, k = 1)
+mean(yhat == y)
+```
+
+
+```{r}
+it <- sample(nrow(X), 0.8*nrow(X))
+Xt <- X[it,]
+Xv <- X[-it,]
+yt <- y[it]
+yv <- y[-it]
+dim(Xt); dim(Xv)
+```
+
+```{r}
+yhat <- knn(Xt, Xv, yt, k = 1)
+mean(yhat == y)
+```
+
+```{r}
+yhat <- knn(Xt, Xv, yt, k = 1)
+mean(yhat == y)
+```
+
+
+```{r}
+k <- 5
+yhat <- knn(Xt, Xv, yt, k)
+mean(yhat == yv)
+yhat <- knn(Xt, Xt, yt, k)
+mean(yhat == yt)
+```
+

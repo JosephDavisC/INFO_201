@@ -52,11 +52,74 @@ min
 ```
 
 ```{r}
-for(i in 1:(length(v) - 1)) {
-  if (v[i+1 > v[i]]) {
-    cat(i, "next larger")
-  }
-}
+name <- c("Ada", "Bob", "Chris", "Diya", "Emmma")
+height <-c(58, 59, 60, 61, 62)
+weight <-c(115,116, 117, 118, 120)
+patients <- data.frame(name, height, weight)
+patients
 ```
 
+
+```{r}
+nrow(patients)
+dim(patients)
+```
+```{r}
+names(patients)
+```
+```{r}
+head(patients, 3)
+```
+
+```{r}
+patients$name
+```
+
+```{r}
+patients [["name"]]
+```
+
+```{r}
+v <- "height"
+patients[[v]]
+```
+
+```{r}
+country_name <- c("Indonesia", "China", "Singapore")
+capital_name <- c("Jakarta", "Beijing", "Singapore")
+population <- c(285000000, 1409000000, 6110000 )
+country <- data.frame(country_name, capital_name, population)
+
+country$country_name
+
+country[["population"]]
+
+c <- "capital_name"
+country[[c]]
+
+```
+
+
+```{r}
+class(country$country_name)
+class(country$capital_name)
+class(country$population)
+
+```
+
+```{r}
+col <- "population"
+
+class(country[[col]])
+```
+
+```{r}
+library(tidyverse)
+
+```
+
+```{r}
+emperors <- read_delim("emperors.csv")
+emperors
+```
 
