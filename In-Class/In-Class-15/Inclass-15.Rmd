@@ -1,0 +1,122 @@
+---
+title: "Inclass-15"
+author: "Joseph Davis Chamdani"
+date: "2025-11-24"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(ollamar)
+```
+
+```{r}
+model <- "llama3.2:1b"
+prompt <- "How is 'Have a nice day' in indonesian"
+response <- generate(model,
+                    prompt,
+                    output = "text")
+response %>%
+  cat("\n")
+```
+
+```{r}
+reviews <- read_delim("amazon-reviews.csv") %>% 
+  select(rating, review)
+reviews %>% 
+  sample_n(3)
+```
+
+```{r}
+reviews$review[11] %>%
+   strwrap() %>%
+   paste(collapse = "\n") %>%
+   cat("\n")
+```
+```{r}
+reviews$review[11] %>%
+   strwrap(width = 70) %>%
+   paste(collapse = "\n") %>%
+   cat("\n")
+```
+```{r}
+name <- "Ott"
+sprintf("Hi, my name is %s, nice to meet you!", name)
+```
+
+```{r}
+template <- "
+Below is a product review. What was the user's rating on 1-5 scale?
+
+%s
+"
+```
+
+```{r}
+model <- "llama3.2:1b"
+for(i in 1:nrow(reviews)) {
+   review <- reviews$review[i]
+   ## First, let's print the review and the actual rating,
+   ## for the reference
+   cat("\n", "---", i, "---\n")  # print the number,
+               # separate different reviews with dashes
+   ## Print the actual rating and wrap the lines for the review
+   review %>%
+      strwrap(width = 70) %>%
+      paste(collapse = "\n") %>%
+      cat(reviews$rating[i], ., "\n")
+   ## Make prompt out of template and the review
+   prompt <- sprintf(template, review)
+   ## Generate response
+   response <- generate(model, prompt,
+                        output = "text")
+   ## Wrap the lines and print:
+   response %>%
+      strwrap() %>%
+      paste(collapse = "\n") %>%
+      cat("\n-> ", ., "\n")
+}
+```
+
+
+```{r}
+template <- "
+Below is a product review.  What was the user's rating on 1-5 scale?
+---
+%s
+---
+Give your answer exactly as
+
+Rating: <rating>
+
+where <rating> is your rating on 1-5 scale, for instance
+
+Rating: 3
+
+for a neutral review.
+"
+model <- "llama3.2:1b"
+for(i in 1:nrow(reviews)) {
+   review <- reviews$review[i]
+   ## First, let's print the review and the actual rating,
+   ## for the reference
+   cat("\n", "---", i, "---\n")  # print the number,
+               # separate different reviews with dashes
+   ## Print the actual rating and wrap the lines for the review
+   review %>%
+      strwrap(width = 70) %>%
+      paste(collapse = "\n") %>%
+      cat(reviews$rating[i], ., "\n")
+   ## Make prompt out of template and the review
+   prompt <- sprintf(template, review)
+   ## Generate response
+   response <- generate(model, prompt,
+                        output = "text")
+   ## Wrap the lines and print:
+   response %>%
+      strwrap(width = 70) %>%
+      paste(collapse = "\n") %>%
+      cat("\n-> ", ., "\n")
+}
+```
+

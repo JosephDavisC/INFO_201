@@ -65,6 +65,7 @@ y_valid <- spiral_validation$color
 
 head(X_train)
 head(y_train)
+
 ```
 
 ---
@@ -72,12 +73,7 @@ head(y_train)
 #### **1.2.2 Use knn library to predict color on training data using k = 1**
 
 ```{r}
-yhat_train <- knn(
-  train = X_train,
-  test  = X_train,
-  cl    = y_train,
-  k     = 1
-)
+yhat_train <- knn(X_train, X_train, y_train, 1)
 
 yhat_train
 ```
@@ -95,8 +91,7 @@ table(yhat_train, y_train)
 #### **1.2.4 Compute accuracy**
 
 ```{r}
-acc_train_k1 <- mean(yhat_train == y_train)
-acc_train_k1
+mean(yhat_train == y_train)
 ```
 
 
@@ -105,50 +100,78 @@ acc_train_k1
 #### **1.2.5 Make a decision boundary plot using only training data. Explain why do you get accuracy 100%**
 
 ```{r}
-ex <- seq(min(X_train$x), max(X_train$x), length.out = 60)
-ey <- seq(min(X_train$y), max(X_train$y), length.out = 60)
+ex <- seq(min(X_train$x), max(X_train$x), length.out = 100)
+ey <- seq(min(X_train$y), max(X_train$y), length.out = 100)
 
 grid <- merge(ex, ey)
 names(grid) <- c("x", "y")
 
-grid$color <- knn(X_train, grid, y_train, k = 1)
+grid$yhat <- knn(X_train, grid, y_train, 1)
 
-ggplot(grid, aes(x, y)) +
-geom_tile(aes(fill = color), alpha = 0.35) +
+ggplot(grid) +
+geom_tile(aes(x, y, fill = yhat), alpha = 0.35) +
 geom_point(data = spiral_training,
 aes(x, y, col = color),
-size = 0.6) +
+size = 0.5) +
 theme(legend.position = "none") +
 coord_fixed()
 ```
 
-Accuracy on the training data is 100 percent because with k equal to 1 every point uses itself as the nearest neighbor, so the predicted label always matches the true label.
+So I think with k = 1 each point uses itself as the nearest neighbor.
+Therefore the predicted class always matches the true class, and the training accuracy is 100 percent.
 
 ---
 
 #### **1.2.6 Now repeat questions 2–5, but use validation data instead of training data.**
 
+---
+
+#### **1.2.6.2 Use knn library to predict color on training data using k = 1**
+
 ```{r}
-yhat_valid <- knn(X_train, X_valid, y_train, k = 1)
+yhat_valid <- knn(X_train, X_valid, y_train, 1)
 
-cm_valid <- table(yhat_valid, y_valid)
-cm_valid
-
-acc_valid_k1 <- mean(yhat_valid == y_valid)
-acc_valid_k1
-
-spiral_validation %>%
-ggplot(aes(x, y, col = color)) +
-geom_point() +
-coord_fixed()
-
+yhat_valid
 ```
-
-The accuracy on the validation data is not 100 percent because the validation points were not used during training. Some validation points lie closer to training points of the wrong class, especially where the classes overlap, so kNN misclassifies them.
-
 
 ---
 
+#### **1.2.6.3 Display the confusion matrix**
+
+```{r}
+table(yhat_valid, y_valid)
+```
+
+---
+
+#### **1.2.6.4 Compute accuracy**
+
+```{r}
+mean(yhat_valid == y_valid)
+```
+
+---
+
+#### **1.2.6.5 Make a decision boundary plot using only training data. Explain why accuracy is not 100%**
+
+```{r}
+ex <- seq(min(X_train$x), max(X_train$x), length.out = 150)
+ey <- seq(min(X_train$y), max(X_train$y), length.out = 150)
+grid <- merge(ex, ey)
+grid$pred <- knn(X_train, grid, y_train, k = 1)
+
+ggplot(grid) +
+  geom_tile(aes(x = x, y = y, fill = pred), alpha = 0.35) +
+  geom_point(data = spiral_validation,
+             aes(x = x, y = y, col = color),
+             size = 0.6) +
+  theme(legend.position = "none") +
+  coord_fixed()
+```
+
+So with k equal to 1 the model memorizes the training data. Each training point is its own nearest neighbor which makes the training accuracy 100 percent. But the validation points are not in the training data. Some of them are closer to a training point from the wrong color especially in areas where the spirals overlap. Because of that the model makes mistakes on validation data and the accuracy goes down.
+
+---
 
 ### **1.3 Find the best k**
 
@@ -157,8 +180,8 @@ The accuracy on the validation data is not 100 percent because the validation po
 #### **1.3.1 Pick a range of k-s 1-15 or so.**
 
 ```{r}
-k_values <- 1:15
-k_values
+ks <- 1:15
+ks
 ```
 
 ---
@@ -170,27 +193,19 @@ k_values
 ##### **a) Compute predictions on training data and validation data. **
 
 ```{r}
-pred_train_list <- list()
-pred_valid_list <- list()
+At <- numeric(length(ks))   
+Av <- numeric(length(ks))  
 
-for (k in k_values) {
-  
-  pred_train <- knn(
-    train = X_train,
-    test  = X_train,
-    cl    = y_train,
-    k     = k
-  )
-  
-  pred_valid <- knn(
-    train = X_train,
-    test  = X_valid,
-    cl    = y_train,
-    k     = k
-  )
-  
-  pred_train_list[[as.character(k)]] <- pred_train
-  pred_valid_list[[as.character(k)]] <- pred_valid
+for (i in seq_along(ks)) {
+
+  k <- ks[i]
+
+  yhat_t <- knn(X_train, X_train, y_train, k)
+  yhat_v <- knn(X_train, X_valid, y_train, k)
+
+
+  At[i] <- mean(yhat_t == y_train)
+  Av[i] <- mean(yhat_v == y_valid)
 }
 ```
 
@@ -199,21 +214,9 @@ for (k in k_values) {
 #### **b) Compute training accuracy and validation accuracy. Store these in corresponding vectors. **
 
 ```{r}
-train_acc <- numeric(length(k_values))
-valid_acc <- numeric(length(k_values))
-
-for (i in seq_along(k_values)) {
-
-  k <- k_values[i]
-  
-  
-  train_acc[i] <- mean(pred_train_list[[as.character(k)]] == y_train)
-  
-  
-  valid_acc[i] <- mean(pred_valid_list[[as.character(k)]] == y_valid)
-}
+At
+Av
 ```
-
 
 ---
 
@@ -222,11 +225,7 @@ for (i in seq_along(k_values)) {
 ---
 
 ```{r}
-acc_df <- data.frame(
-  k = k_values,
-  train_acc = train_acc,
-  valid_acc = valid_acc
-)
+acc_df <- data.frame(ks, At, Av)
 
 acc_df
 ```
@@ -238,17 +237,16 @@ acc_df
 ```{r}
 acc_long <- acc_df %>%
   pivot_longer(
-    cols = c(train_acc, valid_acc),
+    cols = c(At, Av),
     names_to = "type",
-    values_to = "accuracy"
+    values_to = "A"
   )
 
-ggplot(acc_long, aes(x = k, y = accuracy, color = type)) +
-  geom_line() +
-  geom_point()
+ggplot(acc_long, aes(x = ks, y = A, col = type)) +
+  geom_line() 
 ```
 
-The best k is the one with the highest validation accuracy in this plot.
+I think the blue line is a bit different from the example because of the randomness of the random sampling.
 
 ---
 
@@ -266,8 +264,7 @@ The best k is the one with the highest validation accuracy in this plot.
 ```{r}
 skin_full <- read_delim("skin-nonskin.csv")
 
-set.seed(201)         
-skin <- skin_full %>% 
+skin <- skin_full %>%
   sample_n(10000)
 ```
 
@@ -298,7 +295,7 @@ head(skin)
 anyNA(skin)
 
 skin %>%
-  summarise(across(everything(), ~ sum(is.na(.))))
+  summarize(across(everything(), ~ sum(is.na(.))))
 ```
 
 
@@ -308,14 +305,41 @@ skin %>%
 
 ```{r}
 table(skin$Label)
-
-
 prop.table(table(skin$Label)) * 100
 ```
 
+---
+
+#### **2.1.2 Create the design matrix X (the R, G, B values) and the outcome vector y (the labels).**
+
+```{r}
+X_skin <- skin %>%
+  select(B, G, R)
+
+y_skin <- factor(skin$Label)
+
+head(X_skin)
+head(y_skin)
+```
 
 ---
 
+#### **2.1.3 Split both of the above into training and validation sets (80 pct for training, 20 for testing)**
+
+```{r}
+it <- sample(nrow(X_skin), 0.8 * nrow(X_skin))
+
+X_train <- X_skin[it, ]
+X_valid <- X_skin[-it, ]
+
+y_train <- y_skin[it]
+y_valid <- y_skin[-it]
+
+dim(X_train)
+dim(X_valid)
+```
+
+---
 
 ### **2.2 Find the best k**
 
@@ -328,31 +352,32 @@ prop.table(table(skin$Label)) * 100
 ##### **a) Fit the model on training data, and do predictions on both training and validation data.**
 
 ```{r}
+X_skin <- skin %>%
+  select(B, G, R)
+
+y_skin <- factor(skin$Label)
+
+it_skin <- sample(nrow(X_skin), 0.8 * nrow(X_skin))
+
+X_train_skin <- X_skin[it_skin, ]
+X_valid_skin <- X_skin[-it_skin, ]
+y_train_skin <- y_skin[it_skin]
+y_valid_skin <- y_skin[-it_skin]
+
 k_values <- 1:15
 
 pred_train_list <- list()
 pred_valid_list <- list()
 
 for (k in k_values) {
-  
-  pred_train <- knn(
-    train = X_train,
-    test  = X_train,
-    cl    = y_train,
-    k     = k
-  )
-  
-  pred_valid <- knn(
-    train = X_train,
-    test  = X_valid,
-    cl    = y_train,
-    k     = k
-  )
-  
-  pred_train_list[[as.character(k)]] <- pred_train
-  pred_valid_list[[as.character(k)]] <- pred_valid
-}
 
+  yhat_train_skin <- knn(X_train_skin, X_train_skin, y_train_skin, k)
+  yhat_valid_skin <- knn(X_train_skin, X_valid_skin, y_train_skin, k)
+
+
+  pred_train_list[[as.character(k)]] <- yhat_train_skin
+  pred_valid_list[[as.character(k)]] <- yhat_valid_skin
+}
 ```
 
 ---
@@ -360,14 +385,19 @@ for (k in k_values) {
 ##### **b) Compute training and validation accuracy **
 
 ```{r}
-train_acc <- numeric(length(k_values))
-valid_acc <- numeric(length(k_values))
+train_acc_skin <- numeric(length(k_values))
+valid_acc_skin <- numeric(length(k_values))
 
 for (i in seq_along(k_values)) {
   k <- k_values[i]
-  
-  train_acc[i] <- mean(pred_train_list[[as.character(k)]] == y_train)
-  valid_acc[i] <- mean(pred_valid_list[[as.character(k)]] == y_valid)
+
+  train_acc_skin[i] <- mean(
+    pred_train_list[[as.character(k)]] == y_train_skin
+  )
+
+  valid_acc_skin[i] <- mean(
+    pred_valid_list[[as.character(k)]] == y_valid_skin
+  )
 }
 ```
 
@@ -379,8 +409,8 @@ for (i in seq_along(k_values)) {
 ```{r}
 acc_skin <- data.frame(
   k = k_values,
-  train_acc = train_acc,
-  valid_acc = valid_acc
+  train_acc = train_acc_skin,
+  valid_acc = valid_acc_skin
 )
 
 acc_skin
@@ -399,14 +429,21 @@ acc_skin_long <- acc_skin %>%
     values_to = "accuracy"
   )
 
-ggplot(acc_skin_long, aes(x = k, y = accuracy, color = type)) +
+ggplot(acc_skin_long, aes(x = k, y = accuracy, col = type)) +
   geom_line() +
   geom_point()
 ```
 
 ---
 
-It took me 7-8 hours to complete this homework.
+It took me 9 hours to complete this homework.
 
+---
+
+### **References**
+
+Most of the code for this assignment followed the INFO 201 materials. I used the Machine Learning chapter (18.1–18.6), the ggplot2 slides (sl07), the tidyverse slides (sl06–sl08), and the ML decision-boundary examples (sl09b ml), plus a few snippets shown in code snippets Gdocs.
+
+---
 
 [![](jo_stress.PNG){width=19%}](https://joechamdani.com/)
