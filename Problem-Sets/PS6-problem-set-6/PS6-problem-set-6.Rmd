@@ -155,16 +155,21 @@ mean(yhat_valid == y_valid)
 #### **1.2.6.5 Make a decision boundary plot using only training data. Explain why accuracy is not 100%**
 
 ```{r}
-ex <- seq(min(X_train$x), max(X_train$x), length.out = 150)
-ey <- seq(min(X_train$y), max(X_train$y), length.out = 150)
+ex <- seq(min(X_valid$x), max(X_valid$x), length.out = 150)
+ey <- seq(min(X_valid$y), max(X_valid$y), length.out = 150)
+
 grid <- merge(ex, ey)
+names(grid) <- c("x", "y")  
+
 grid$pred <- knn(X_train, grid, y_train, k = 1)
 
 ggplot(grid) +
   geom_tile(aes(x = x, y = y, fill = pred), alpha = 0.35) +
-  geom_point(data = spiral_validation,
-             aes(x = x, y = y, col = color),
-             size = 0.6) +
+  geom_point(
+    data = spiral_validation,
+    aes(x = x, y = y, col = color),
+    size = 0.6
+  ) +
   theme(legend.position = "none") +
   coord_fixed()
 ```
@@ -349,58 +354,25 @@ dim(X_valid)
 
 ---
 
-##### **a) Fit the model on training data, and do predictions on both training and validation data.**
+##### **a) Fit the model on training data, and do predictions on both training and validation data. & b) Compute training and validation accuracy**
 
 ```{r}
-X_skin <- skin %>%
-  select(B, G, R)
-
-y_skin <- factor(skin$Label)
-
-it_skin <- sample(nrow(X_skin), 0.8 * nrow(X_skin))
-
-X_train_skin <- X_skin[it_skin, ]
-X_valid_skin <- X_skin[-it_skin, ]
-y_train_skin <- y_skin[it_skin]
-y_valid_skin <- y_skin[-it_skin]
-
 k_values <- 1:15
 
-pred_train_list <- list()
-pred_valid_list <- list()
-
-for (k in k_values) {
-
-  yhat_train_skin <- knn(X_train_skin, X_train_skin, y_train_skin, k)
-  yhat_valid_skin <- knn(X_train_skin, X_valid_skin, y_train_skin, k)
-
-
-  pred_train_list[[as.character(k)]] <- yhat_train_skin
-  pred_valid_list[[as.character(k)]] <- yhat_valid_skin
-}
-```
-
----
-
-##### **b) Compute training and validation accuracy **
-
-```{r}
 train_acc_skin <- numeric(length(k_values))
 valid_acc_skin <- numeric(length(k_values))
 
 for (i in seq_along(k_values)) {
   k <- k_values[i]
 
-  train_acc_skin[i] <- mean(
-    pred_train_list[[as.character(k)]] == y_train_skin
-  )
+  yhat_train_skin <- knn(X_train, X_train, y_train, k)
+  yhat_valid_skin <- knn(X_train, X_valid, y_train, k)
 
-  valid_acc_skin[i] <- mean(
-    pred_valid_list[[as.character(k)]] == y_valid_skin
-  )
+  train_acc_skin[i] <- mean(yhat_train_skin == y_train)
+  valid_acc_skin[i] <- mean(yhat_valid_skin == y_valid)
 }
-```
 
+```
 
 ---
 

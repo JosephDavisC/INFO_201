@@ -1,0 +1,124 @@
+---
+title: "PS5-Quiz-Practice"
+output: html_document
+---
+
+1
+
+1.1.1
+
+```{r}
+scripps <- read_delim("scripps-co2.csv") %>% 
+  select(year, month, co2)
+
+scripps
+```
+
+1.1.2
+
+1.1.3
+
+```{r}
+scripps %>% 
+  filter(co2<0) %>% 
+  head()
+```
+
+1.1.4
+
+```{r}
+scripps %>% 
+  arrange(year, month) %>% 
+  slice(1)
+
+scripps %>% 
+  arrange(desc(year), desc(month)) %>% 
+  slice(1)
+```
+
+1.1.5
+
+```{r}
+scripps2 <- scripps %>%
+  mutate(
+    co2 = na_if(co2, -99.99),
+    date = make_date(year, month, 1)
+  ) %>%
+  filter(!is.na(co2))
+
+
+scripps2 %>%
+  ggplot(aes(x = date, y = co2)) +
+  geom_line() +
+  labs(
+    x = "Date",
+    y = "CO2 concentration (ppm)",
+    title = "CO2 concentration over time"
+  )
+
+```
+
+1.2
+
+1.2.1
+
+```{r}
+hadcrut <- read_delim("hadcrut-monthly.csv") %>%
+  select(year, `1`:`12`)  
+
+head(hadcrut)
+```
+
+
+1.2.3
+
+wide format
+
+1.2.4
+
+```{r}
+hadcrut_long <- hadcrut %>% 
+  pivot_longer(
+    cols = `1`:`12`,
+    names_to = "month",
+    values_to = "temp_anomaly"
+  ) %>% 
+  mutate(month = as.integer(month))
+
+hadcrut_long
+```
+
+
+1.2.5
+
+```{r}
+hadcrut_long <- hadcrut_long %>%
+  mutate(temp_anomaly = na_if(temp_anomaly, -9.999)) %>%
+  filter(!is.na(temp_anomaly))
+
+hadcrut_long
+```
+
+
+
+1.2.6
+
+```{r}
+hadcrut_long %>%
+  arrange(year, month) %>%
+  slice(1)
+
+hadcrut_long %>%
+  arrange(desc(year), desc(month)) %>%
+  slice(1)
+```
+
+
+1.2.7
+
+```{r}
+
+```
+
+
+

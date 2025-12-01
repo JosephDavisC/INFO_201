@@ -47,3 +47,35 @@ titanic %>%
 titanic %>%
   filter(survived == 0 & sex == "female")
 ```
+
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+titanic <- read_delim("titanic.csv")
+titanic
+```
+
+```{r}
+titanic <- titanic %>%
+mutate(age = as.character(age))
+
+titanic
+```
+
+```{r}
+titanic
+```
+
+
+```{r}
+titanic$age <- as.character(titanic$age)
+titanic
+```
+
+```{r}
+titanic
+```
+

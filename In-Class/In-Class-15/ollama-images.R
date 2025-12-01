@@ -15,7 +15,7 @@ library(ollamar)
 ## Can also use 'llava', takes 5.7G ram
 model <- "qwen3-vl:8b"
 cat("Using", model, "model\n")
-picFolder <- "picFolder"
+picFolder <- "~/Desktop/INFO_201/INFO_201/In-Class/In-Class-15/picFolder"
 options(timeout = 1e4)  # for slow computers
 
 ## Can it recognize and translate handwritten Chinese?

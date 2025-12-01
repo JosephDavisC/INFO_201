@@ -1,0 +1,395 @@
+---
+title: "PS3-Quiz-Practice"
+output: html_document
+---
+
+1.1.1
+
+```{r}
+library (tidyverse)
+
+data_life <- read_delim("life-expectancy.csv")
+data_life
+```
+
+
+1.1.2
+
+```{r}
+nrow(data_life)
+ncol(data_life)
+
+dim(data_life)
+```
+
+
+1.1.3
+
+```{r}
+names(data_life)
+```
+
+
+1.1.4
+
+```{r}
+head(data_life)
+```
+
+
+1.1.5
+
+A row represents one country, including its region, life expectancy in 1960 and 2019, GDP per capita in 1960 and 2019, and population values for both years.
+
+
+1.1.6
+
+```{r}
+for (col in names(data_life)) {
+  miss <- sum(is.na(data_life[col]))
+  cat(col,miss, "\n")
+}
+```
+
+1.1.7
+
+```{r}
+for (col in names(data_life)) {
+  miss <- sum(is.na(data_life[[col]]))
+  
+  if(is.numeric(data_life[[col]])){
+    avg <- mean(data_life[[col]], na.rm = TRUE)
+    cat ("col:", col, "miss:", miss, "avg:", avg, "\n")
+  }else {
+    cat("col:", col, "miss:", miss, "\n")
+  }
+}
+```
+
+1.2
+
+1.2.1
+
+```{r}
+data_life <- data_life %>% 
+  mutate(growth = (le2019 - le1960) / le1960 * 100)
+
+head(data_life)
+```
+
+
+1.2.2
+
+```{r}
+mean(data_life$growth, na.rm=TRUE)
+```
+
+1.2.3
+
+```{r}
+data_life %>% 
+  arrange(desc(growth)) %>% 
+  slice (1)
+  
+data_life %>% 
+  arrange(growth) %>% 
+  slice(1)
+
+```
+
+
+1.2.4
+
+```{r}
+sum(data_life$growth > 50, na.rm = TRUE)
+```
+
+
+1.2.5 
+
+```{r}
+sum(data_life$growth < 0, na.rm = TRUE)
+```
+
+
+1.2.6
+
+```{r}
+countryChange <- function(country) {
+  data_life %>% 
+    filter(name == country) %>% 
+    pull(growth)
+}
+
+countryChange("Indonesia")
+countryChange("Yemen")
+countryChange("Sweden")
+```
+
+
+1.3
+
+1.3.1
+
+```{r}
+length(unique(data_life$region))
+unique(data_life$region)
+```
+
+
+1.3.2
+
+```{r}
+data_life %>% 
+  filter(region == "Americas") %>% 
+  summarize(avg_le1960 = mean(le1960, na.rm = TRUE))
+
+```
+
+
+1.3.3
+
+```{r}
+data_life %>% 
+  filter(region == "Asia") %>% 
+  summarize(avg_le1960 = mean(le1960, na.rm = TRUE), 
+            avg_legrowth = mean(growth, na.rm = TRUE))
+```
+
+1.3.4
+
+```{r}
+data_life %>% 
+  group_by(region) %>% 
+   summarize(avg_le1960 = mean(le1960, na.rm = TRUE), 
+            avg_legrowth = mean(growth, na.rm = TRUE))
+```
+
+2
+
+2.1 
+
+```{r}
+plot (
+  data_life$le1960,
+  data_life$growth,
+  main = "Life expectancy in 1960 v.s.Change in life expectancy",
+  xlab = "Life expectancy in 1960",
+  ylab = "Chang in life expectancy for each country"
+)
+```
+
+
+2.2
+
+Countries with low life expectancy in 1960 tend to show much larger improvements. Countries that already had high life expectancy in 1960 show smaller growth. This suggests diminishing returns and global convergence: nations that started worse off improved more rapidly over time.
+
+
+3
+
+3.1
+
+3.1.1
+
+```{r}
+data_flight <- read_delim ("nycflights13.csv")
+data_flight
+```
+
+3.1.2
+
+```{r}
+dim (data_flight)
+```
+
+
+3.1.3
+
+A row represents one flight departing from New York City (JFK, LGA, or EWR) in 2013, including its departure time, arrival time, delays, and other flight information.
+
+3.2
+
+3.2.1
+
+```{r}
+sum(is.na(data_flight$dep_delay))
+```
+
+
+3.2.2
+
+```{r}
+data_filter_clean <- data_flight %>% 
+  filter(!is.na(dep_delay))
+
+nrow(data_filter_clean)
+```
+
+
+3.2.3
+
+```{r}
+min(data_filter_clean$dep_delay)
+max(data_filter_clean$dep_delay)
+```
+
+3.2.4
+
+```{r}
+data_filter_clean %>% 
+  filter(dest == "LAX") %>% 
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+3.2.5
+
+```{r}
+data_filter_clean %>% 
+  group_by(dest) %>% 
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE)) %>% 
+  arrange(desc(avg_delay)) %>% 
+  slice(1:3)
+```
+
+3.2.6
+
+```{r}
+data_filter_clean %>% 
+  group_by(month) %>% 
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+3.2.7
+
+```{r}
+data_filter_clean %>% 
+  filter(dest == "LAX") %>% 
+  group_by(month) %>% 
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+
+3.2.8
+
+```{r}
+data_filter_clean %>% 
+  filter(dest == "LAX", dep_delay >= 10) %>% 
+  group_by(month) %>% 
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE))
+```
+
+
+3.2.9
+
+```{r}
+d <- c(11, 3, 5, 15, 12, 7, 9, 19)
+mean(d>10) * 100
+```
+
+3.2.10
+
+```{r}
+data_filter_clean %>% 
+  filter(dest == "LAX") %>% 
+  group_by(carrier) %>% 
+  summarize(perc_delayed = mean(dep_delay > 10) * 100)
+
+```
+
+3.2.11
+
+```{r}
+delay_by_hour <- data_filter_clean %>%
+  filter(dest == "LAX", dep_delay > 15) %>%
+  mutate(hour = dep_time %/% 100) %>%
+  group_by(hour) %>%
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  arrange(avg_delay)
+
+head(delay_by_hour, 2)  
+tail(delay_by_hour, 2)
+```
+
+
+3.2.12
+
+```{r}
+data_filter_clean %>%
+  filter(dest == "LAX") %>%
+  group_by(carrier, month) %>%
+  summarize(perc_delayed = mean(dep_delay >= 10) * 100, .groups = "drop") %>%
+  arrange(desc(perc_delayed)) %>%
+  slice(1:3)
+```
+
+3.2.13
+
+```{r}
+data_filter_clean %>% 
+  filter(dest == "LAX") %>% 
+  summarize(n_airlines = n_distinct(carrier))
+```
+
+3.3
+
+3.3.1
+
+no
+
+3.3.2
+
+```{r}
+data_flight %>% 
+  filter(dest == "LAS") %>% 
+  nrow()
+```
+
+3.3.3
+
+```{r}
+data_flight %>% 
+  filter(dest == "LAS") %>% 
+  arrange(air_time) %>% 
+  select(year, month, day, dep_time, air_time, carrier, origin) %>%
+  slice(1)
+```
+
+
+3.3.4
+
+Typical NYC to Las Vegas flight times are about 5 hours 15 minutes to 6 hours. The fastest airtime in the dataset is 256 minutes (4 hours 16 minutes), which is shorter than typical and not very realistic for this route. It is likely an error or an unusually favorable recording.
+
+3.3.5
+
+```{r}
+data_flight %>%
+  filter(dest == "LAS") %>%
+  mutate(speed = distance / air_time * 60) %>%
+  filter(rank(speed) <= 3 | rank(desc(speed)) <= 3) %>%
+  select(year, month, day, dep_time, dep_delay, carrier, speed) %>%
+  arrange(speed)
+```
+
+
+3.3.6
+
+```{r}
+data_flight %>%
+  filter(dest == "LAS") %>%
+  count(year, month, day) %>%
+  summarize(
+    min_flights = min(n),
+    max_flights = max(n)
+  )
+```
+
+3.3.7
+
+```{r}
+data_flight %>%
+  group_by(carrier) %>%
+  summarize(avg_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  mutate(position = rank(desc(avg_delay))) %>%
+  filter(carrier == "AA")
+```
+

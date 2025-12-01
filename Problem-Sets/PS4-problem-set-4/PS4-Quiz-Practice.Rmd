@@ -1,0 +1,345 @@
+---
+title: "PS4-Quiz-Practice"
+output: html_document
+---
+
+
+1
+
+1.1.1
+
+```{r}
+library(tidyverse)
+
+data <- read_delim("gapminder.csv", show_col_types = FALSE)
+
+dim(data)
+```
+
+1.1.2
+
+```{r}
+head(data)
+```
+
+1.1.3
+
+Each row represents one country in a specific year, showing its demographic and economic data such as population, fertility rate, GDP, and life expectancy.
+
+
+1.1.4
+
+```{r}
+data %>% 
+  filter(str_detect(name, "Korea") |
+        str_detect(name, "Venezuela") |
+          str_detect(name, "UK")) %>% 
+  select(name, iso2, iso3, region) %>% 
+  distinct()
+```
+
+
+1.1.5
+
+```{r}
+data %>% 
+  filter(time == 2000, !is.na(region)) %>% 
+  group_by(region) %>% 
+  summarize(n_countries = n_distinct(name))
+```
+
+1.1.6
+
+```{r}
+data %>% 
+  summarize(
+    n_name = n_distinct(name),
+    n_iso_2 = n_distinct(iso2),
+    n_iso_3 = n_distinct(iso3)
+  )
+```
+
+1.1.7
+
+```{r}
+data %>%
+  filter(is.na(iso2)) %>%
+  select(name, iso3) %>%
+  distinct()
+```
+
+1.1.8
+
+Namibia appears as the only real country without an iso2 code because in the dataset, Namibia’s ISO-3 code is recorded as “NAM.”
+The official ISO-2 code for Namibia should be “NA,” but “NA” is also used in R to represent missing values.
+
+Because of this, the dataset treats "NA" as a missing value instead of as Namibia’s true iso-2 code, so Namibia’s iso2 entry becomes NA.
+
+2
+
+2.1
+
+```{r}
+data_co2 <- data %>% 
+  filter(!is.na(co2_PC))
+
+nrow(data_co2)
+```
+
+
+2.2
+
+```{r}
+data_co2 %>% 
+  filter(name %in% c("United States", "China", "India", "Indonesia")) %>% 
+  ggplot(aes(x= time, y = co2, color = name)) +
+  geom_line () + 
+  labs(
+    title = "Total CO2 Emissions Over Time",
+    x = "Year",
+    y = "Total CO2 Emissions (kt of CO₂ equivalent)",
+    color = "Country"
+  )
+```
+
+2.3
+
+```{r}
+data_co2 %>% 
+  filter(name %in% c("United States", "China", "India", "Indonesia")) %>% 
+  ggplot(aes(x= time, y = co2_PC, color = name)) +
+  geom_line () + 
+  labs(
+    title = "Total CO2 Per Capita Over Time",
+    x = "Year",
+    y = "Total CO2 Per Capita (kt of CO2 equivalent)",
+    color = "Country"
+  )
+```
+
+2.4
+
+```{r}
+data %>% 
+  filter(time %in% c(1960, 2016)) %>% 
+  group_by(region, time) %>% 
+  summarize(avg_co2 = mean(co2_PC, na.rm = TRUE))
+```
+
+2.5
+
+```{r}
+data %>%
+  filter(time %in% c(1960, 2016),
+         !is.na(region)) %>%      # remove missing regions
+  group_by(region, time) %>%
+  summarize(avg_co2 = mean(co2_PC, na.rm = TRUE)) %>%
+  ggplot(aes(x = region,
+             y = avg_co2,
+             fill = factor(time))) +
+  geom_col(position = "dodge") +
+  scale_fill_manual(values = c("1960" = "#2C2C69",  # dark navy
+                               "2016" = "#E3D9A4")) +  # beige
+  labs(
+    x = "Continent",
+    y = "Average CO2 per capita",
+    fill = "Year"
+  )
+```
+
+3
+
+3.1 
+
+3.1.1
+
+```{r}
+orange <- read_delim("orange-trees.csv", show_col_types = FALSE)
+dim(orange)
+head(orange)
+```
+
+3.1.2
+
+```{r}
+#a)
+
+orange_1 <- orange %>% 
+  filter(tree == 1)
+
+orange_1
+```
+
+```{r}
+#b)
+
+orange_1 %>% 
+  mutate (growth = circumference - lag (circumference))
+
+```
+
+c)
+
+Because lag(circumference) for the first row is NA.
+There is no earlier measurement before age 118 for Tree 1, so no growth can be computed.
+
+d)
+
+58 - 30 = 28
+
+3.1.3
+
+```{r}
+
+orange_growth <- orange %>% 
+  group_by(tree) %>% 
+  arrange (age, .by_group = TRUE) %>% 
+  mutate (growth = circumference - lag(circumference))
+
+orange_growth
+
+```
+
+
+3.1.4
+
+```{r}
+orange_growth %>% 
+  ggplot(aes(x = age, y = growth, color = factor(tree))) +
+  geom_line() +
+  geom_point() +
+  labs(
+    x = "Age (days)",
+    y = "Growth in circumference",
+    color = "Tree"
+  )
+```
+
+3.2
+
+3.2.1
+
+```{r}
+data_life <- data %>%
+  filter(!is.na(region), !is.na(lifeExpectancy), !is.na(fertilityRate))
+
+nrow(data_life)
+```
+
+3.2.2
+
+```{r}
+data_1960 <- data_life %>% 
+  filter(time == 1960) 
+
+names(data_1960)
+```
+
+
+```{r}
+data_1960 %>%
+  ggplot(aes(x = fertilityRate,
+             y = lifeExpectancy,
+             color = region,
+             size = totalPopulation)) +
+  geom_point(alpha = 0.7) +
+  labs(
+    x = "Total Fertility Rate",
+    y = "Life Expectancy",
+    color = "Region",
+    size = "totaPopulation",
+    title = "Fertility vs Life Expectancy in 1960"
+  )
+```
+
+3.3.3
+
+```{r}
+data_2019 <- data_life %>% 
+  filter(time == 2019)
+```
+
+```{r}
+data_2019 %>% 
+  ggplot(aes( x= fertilityRate,
+             y = lifeExpectancy,
+             size = totalPopulation,
+             color = region)) +
+  geom_point(alpha = 0.7) +
+  labs(
+    x = "Total Fertility Rate",
+    y = "Life Expectancy",
+    size = "totalPopulation",
+    color = "Region",
+    title = "Fertility vs Life Expectancy in 2019"
+  )
+```
+
+3.4
+
+In 1960, many countries had high fertility (around 5–8 children per woman) and relatively low life expectancy, and the points are more spread out. By 2019, most countries moved toward much lower fertility and higher life expectancy, so the cloud of points shifts to the lower-fertility, higher-life-expectancy corner. The negative relationship between fertility and life expectancy is still there, but it is tighter, and the big population countries have moved a lot along this path. Overall, the world has become healthier and people live longer while having fewer children, although some regions in Africa still lag behind other continents.
+
+3.5
+
+```{r}
+data_life %>% 
+  filter(time %in% c(1960,2019)) %>% 
+  group_by (region, time) %>% 
+  summarize(avg_le = mean(lifeExpectancy, na.rm = TRUE))
+```
+
+3.6
+
+```{r}
+data_life %>%
+  filter(time %in% c(1960, 2019)) %>%
+  arrange(region, name, time) %>% 
+  group_by(region, name) %>%
+  mutate(le_growth = lifeExpectancy - lag(lifeExpectancy)) %>%
+  ungroup() %>%
+  filter(!is.na(le_growth)) %>%     
+  group_by(region) %>%
+  summarize(avg_growth = mean(le_growth))
+```
+
+
+3.7
+
+```{r}
+countries <- c("United States of America", "Sweden", "China", "Indonesia")
+
+data_life %>% 
+  filter(name %in% countries) %>% 
+  ggplot(aes(x = fertilityRate,
+             y = lifeExpectancy,
+             colour = name))+
+  geom_path(size = 0.5, alpha = 0.8)+
+  geom_point(size = 1)+
+    labs(
+    x = "Total completed fertility",
+    y = "Life expectancy at birth",
+    color = "Country",
+    title = "Fertility–Life Expectancy Trajectories Over Time"
+  )
+```
+
+3.8
+
+```{r}
+rank_1960 <- data_life %>%
+  filter(time == 1960, !is.na(lifeExpectancy)) %>%
+  mutate(rank = rank(-lifeExpectancy)) %>%
+  filter(name == "United States of America") %>%
+  pull(rank)
+
+rank_1960
+
+rank_2019 <- data_life %>%
+  filter(time == 2019, !is.na(lifeExpectancy)) %>%
+  mutate(rank = rank(-lifeExpectancy)) %>%
+  filter(name == "United States of America") %>%
+  pull(rank)
+
+rank_2019
+```
+

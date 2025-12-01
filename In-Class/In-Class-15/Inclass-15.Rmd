@@ -120,3 +120,71 @@ for(i in 1:nrow(reviews)) {
 }
 ```
 
+```{r}
+template <- "
+Below is a product review.  What was the user's rating on 1-5 scale?
+---
+%s
+---
+Give your answer exactly as
+
+Rating: <rating>
+
+where <rating> is your rating on 1-5 scale, for instance
+
+Rating: 3
+
+for a neutral review.
+"
+model <- "llama3.2:1b"
+reviews$predicted <- NA
+for(i in 1:nrow(reviews)) {
+   review <- reviews$review[i]
+   ## First, let's print the review and the actual rating,
+   ## for the reference
+   cat("\n", "---", i, "---\n")  # print the number,
+               # separate different reviews with dashes
+   ## Print the actual rating and wrap the lines for the review
+   review %>%
+      strwrap(width = 70) %>%
+      paste(collapse = "\n") %>%
+      cat(reviews$rating[i], ., "\n")
+   ## Make prompt out of template and the review
+   prompt <- sprintf(template, review)
+   ## Generate response
+   response <- generate(model, prompt,
+                        output = "text")
+   ## Wrap the lines and print:
+   response %>%
+      strwrap(width = 70) %>%
+      paste(collapse = "\n") %>%
+      cat("\n-> ", ., "\n")
+   ## Extract the answer and convert to a number:
+   r <- response %>%
+      sub(".*Rating: *([[:digit:]]).*", r"(\1)", .) %>%
+      as.numeric
+   ## Replace the predicted NA, but only if it was able to extract
+   ## a single number
+   if(length(r) == 1)
+      reviews$predicted[i] <- r
+}
+```
+```{r}
+table(Predicted = reviews$predicted,
+      Actual = reviews$rating)
+```
+
+```{r}
+mean(reviews$predicted == reviews$rating, na.rm = TRUE)
+```
+
+```{r}
+mse <- mean((reviews$predicted - reviews$rating)^2, na.rm = TRUE)
+mse
+```
+
+
+```{r}
+
+```
+
