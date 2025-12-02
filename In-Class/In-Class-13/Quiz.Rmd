@@ -1,0 +1,14 @@
+---
+title: "Quiz"
+output: html_document
+---
+
+```{r}
+gsub("o", "e", "those damned cows!")
+
+gsub("os", "es", "those damned cows!")
+
+gsub("(.)s", r"(\1z)", "those damned cows!")
+
+```
+
